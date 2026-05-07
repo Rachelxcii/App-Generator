@@ -1,0 +1,39 @@
+{
+    "window": {
+        "width": 2100,
+        "height": 1500,
+        "title": "Maze Generator & Solver",
+        "fps": 60
+    },
+
+    "colors": {
+        "background": [30, 30, 30],
+        "button_base": [50, 50, 50],
+        "button_hover": [100, 100, 100],
+        "text_white": [255, 255, 255]
+    },
+    
+    "_metadata": {
+        "fonts_directory": "/assets/fonts",
+        "font_format": "Each font requires a 'file' name and a 'size' integer"
+    },
+
+    "fonts": {
+        "sml_button": {
+            "file": "SupermercadoOne-Regular.ttf",
+            "size": 32
+        },
+        "mid_button": {
+            "file": "SupermercadoOne-Regular.ttf",
+            "size": 32
+        },
+        "big_button": {
+            "file": "SupermercadoOne-Regular.ttf",
+            "size": 32
+        },
+        "main_title": {
+            "file": "SupermercadoOne-Regular.ttf",
+            "size": 72
+        }
+    }
+}
