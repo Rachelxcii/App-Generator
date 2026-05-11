@@ -15,6 +15,32 @@
         "fps": 60
     },
 
+     "colors": {
+        "background": [30, 30, 30],
+        "button_base": [50, 50, 50],
+        "button_hover": [100, 100, 100],
+        "text_white": [255, 255, 255]
+    },
+
+    "fonts": {
+        "sml_button": {
+            "file": "SupermercadoOne-Regular.ttf",
+            "size": 32
+        },
+        "mid_button": {
+            "file": "SupermercadoOne-Regular.ttf",
+            "size": 32
+        },
+        "big_button": {
+            "file": "SupermercadoOne-Regular.ttf",
+            "size": 32
+        },
+        "main_title": {
+            "file": "SupermercadoOne-Regular.ttf",
+            "size": 100
+        }
+    },
+
     "main_screen": {
         "has_return": false,
         "title": {
@@ -49,32 +75,6 @@
                     "hover": "button_hover"
                 }
             }
-        }
-    },
-
-    "colors": {
-        "background": [30, 30, 30],
-        "button_base": [50, 50, 50],
-        "button_hover": [100, 100, 100],
-        "text_white": [255, 255, 255]
-    },
-
-    "fonts": {
-        "sml_button": {
-            "file": "SupermercadoOne-Regular.ttf",
-            "size": 32
-        },
-        "mid_button": {
-            "file": "SupermercadoOne-Regular.ttf",
-            "size": 32
-        },
-        "big_button": {
-            "file": "SupermercadoOne-Regular.ttf",
-            "size": 32
-        },
-        "main_title": {
-            "file": "SupermercadoOne-Regular.ttf",
-            "size": 100
         }
     }
 }

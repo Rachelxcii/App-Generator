@@ -111,7 +111,7 @@ class TestFonts(BaseConfigTest):
         for font in self.fonts:
             for key in keys:
                 msg = f'Font "{font}" has not "{key}" key.'
-                assert key in self.config[font], msg
+                assert key in self.fonts[font], msg
 
 
 class TestScreens(BaseConfigTest):
@@ -133,12 +133,23 @@ class TestScreens(BaseConfigTest):
         '''Verify fonts section is a dictionary'''
         for screen in self.screens:
             msg = f'The {screen} section should be a dictionary.'
-            assert isinstance(screen, dict), msg
+            assert isinstance(self.config[screen], dict), msg
 
     def test_mandatory_keys_in_every_screen(self):
-        '''Check if every screen have all required variables'''
-        keys = ['has_return', 'title']
+        '''Check if every screen has all required variables'''
+        keys = ['has_return', 'title', 'buttons']
         for screen in self.screens:
             for key in keys:
                 msg = f'Screen "{screen}" has not "{key}" key.'
                 assert key in self.config[screen], msg
+
+    def test_mandatory_keys_in_every_title(self):
+        '''Check if every title, inevery screen, has all required variables'''
+        keys = ['name', 'size', 'position']
+        for screen in self.screens:
+            for key in keys:
+                msg = f'Screen "{screen}" title has not "{key}" key.'
+                assert key in self.config[screen]['title'], msg
+
+
+
