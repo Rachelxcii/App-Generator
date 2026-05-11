@@ -10,8 +10,8 @@
         }, 
         
     "window": {
-        "width": 2100,
-        "height": 1500,
+        "width": 700,
+        "height": 500,
         "fps": 60
     },
 
@@ -19,7 +19,8 @@
         "background": [30, 30, 30],
         "button_base": [50, 50, 50],
         "button_hover": [100, 100, 100],
-        "text_white": [255, 255, 255]
+        "title_txt": [200, 200, 200],
+        "white_txt": [255, 255, 255]
     },
 
     "fonts": {

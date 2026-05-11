@@ -3,7 +3,9 @@ from src.ui.elements import Button
 from src.utils.config_loader import get_config
 
 
-def main_screen(config_screen: dict, fonts: dict) -> None:
+def main_screen(
+        window: dict, colors: dict, fonts: dict, config_screen: dict
+        ) -> None:
     """
     Renders the main menu of the Maze Generator & Solver.
     
@@ -14,7 +16,7 @@ def main_screen(config_screen: dict, fonts: dict) -> None:
 
     # 1. Initialize Window Settings from Config
     pygame.init()
-    width, height = 700, 500
+    width, height = window['width'], window['height']
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Maze Generator & Solver")
     
@@ -22,40 +24,40 @@ def main_screen(config_screen: dict, fonts: dict) -> None:
     clock = pygame.time.Clock()
 
 
-    # 2. UI Layout Constants
+    # 2 Load main screen buttons    
     # Using layout logic based on screen dimensions for responsiveness
     buttons = []
 
-    # 2.1 Main buttons: "Generator", "Solver", "Dashboard"
-    buttons_name = ["Generator", "Solver", "Dashboard"]
-    
-    width_b, height_b, space_b, left_space = 150, 150, 75, 50
-    y_pos = 250 # + ((400 - 250) // 2)
-    
-    for i, nombre in enumerate(buttons_name):
-        # Horizontal space between buttons: space_b
-        x_pos = left_space + (i * width_b) + (i * space_b)
-        buttons.append(Button(x_pos, y_pos, width_b, height_b, nombre, 
-                              fonts['sml_button'], (50, 50, 50), (100, 100, 100)))
-    
-    # 2.2 Auxiliar buttons: "Reset", "Exit"
-    buttons_name = ["Reset", "Exit"]
-    
-    width_b, height_b, space_b, left_space = 100, 50, 200, 150
-    y_pos = 450 - height_b//2
-    
-    for i, nombre in enumerate(buttons_name):
-        # Horizontal space between buttons: space_b
-        x_pos = left_space + (i * width_b) + (i * space_b)
-        buttons.append(Button(x_pos, y_pos, width_b, height_b, nombre, 
-                              fonts['sml_button'], (50, 50, 50), (100, 100, 100)))
+    for line_config in config_screen['buttons'].values():
+
+        buttons_name = line_config['names']
+        alignment = line_config['alignment']
+        width_button = line_config['size']['width']
+        height_button = line_config['size']['height']
+        dist_edge = line_config['dist_to_edge']
+        space_buttons = line_config['dist_between_buttons']
+        position = line_config['position']
+        
+        for i, name in enumerate(buttons_name):
+
+            x_pos, y_pos = position['x'], position['y']
+            if alignment == "horizontal":  
+                x_pos = dist_edge + (i * width_button) + (i * space_buttons)
+            elif alignment == "vertical":
+                y_pos = dist_edge + (i * height_button) + (i * space_buttons)
+
+            buttons.append(Button(
+                x_pos, y_pos, width_button, height_button, name, 
+                fonts['sml_button'], colors['button_base'], 
+                colors['button_hover']
+                ))
 
     is_running = True
     while is_running:
-        screen.fill((30, 30, 30)) # Dark background
+        screen.fill(colors['background']) # Dark background
         
         # 1. Title drawing block
-        txt_title = font_title.render("MAZE SOLVER", True, (200, 200, 200))
+        txt_title = font_title.render("MAZE SOLVER", True, colors['title_txt'])
         screen.blit(txt_title, (width // 2 - txt_title.get_width() // 2, 50))
 
         # 2. Event handling block
@@ -75,7 +77,7 @@ def main_screen(config_screen: dict, fonts: dict) -> None:
             button.drawing(screen)
 
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(window['fps'])
 
     pygame.quit()
 

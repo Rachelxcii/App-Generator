@@ -1,6 +1,6 @@
 import pygame
 from src.utils.config_loader import get_config
-from src.ui.fonts_loader import load_all_fonts
+from src.ui.loaders import fonts_loader
 from src.ui.renderer import main_screen
 
 
@@ -11,9 +11,16 @@ config = get_config()
 if not pygame.font.get_init():
     pygame.font.init()
 
-# Load fonts
+# Load ui configuration
+window = config['window']
+colors = config['colors']
 fonts = load_all_fonts(config_fonts=config['fonts'])
 
 
 if __name__ == '__main__':
-    main_screen(config_screen=config['main_screen'], fonts=fonts)
+    main_screen(
+        window=window,  
+        colors=colors,
+        fonts=fonts,
+        config_screen=config['main_screen']
+        )
