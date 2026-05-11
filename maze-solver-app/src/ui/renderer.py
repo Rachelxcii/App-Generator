@@ -5,7 +5,7 @@ from src.utils.config_loader import get_config
 from src.ui.fonts_loader import (font_sml_button, font_mid_button, 
                                  font_big_button, font_main_title)
 
-def main_screen():
+def main_screen(config_screen: dict) -> None:
     """
     Renders the main menu of the Maze Generator & Solver.
     

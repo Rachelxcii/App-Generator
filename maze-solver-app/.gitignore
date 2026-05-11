@@ -2,11 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-.venv/
-.env/
-6env/
-env
-venv
+.venv
+.env
 
 # macOS
 .DS_Store

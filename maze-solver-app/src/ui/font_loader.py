@@ -1,16 +1,26 @@
 from pathlib import Path
 import pygame
-from src.utils.config_loader import get_config
 
-# Load configuration
-config = get_config()
+def load_all_fonts(config_fonts: dict) -> dict:
+    '''
+    
+    '''
+    # Locate root (from maze-solver-app/src/utils/ to maze-solver-app/)
+    root_path = Path(__file__).resolve().parent.parent.parent
+    fonts_path = root_path / 'assets' / 'fonts' 
 
-# TO-DO crear def load_all_fonts(config: dict) -> dict:
+    fonts = {}
+    for key, data in config_fonts.items():
+        # Skip metadata or anotehr information
+        if key.startswith("_"): 
+            continue
+        path = fonts_path / data['file']
+        fonts[key] = pygame.font.Font(str(path), data['size'])
 
-# Initialize pygame font
-if not pygame.font.get_init():
-    pygame.font.init()
+    return fonts
 
+
+'''
 root_path = Path(__file__).resolve().parent.parent.parent
 
 # Small button config
@@ -36,10 +46,10 @@ main_title_name = config['fonts']['main_title']['file']
 main_title_size = config['fonts']['main_title']['size']
 main_title_path = root_path / 'assets' / 'fonts' / main_title_name
 font_main_title = pygame.font.Font(str(main_title_path), main_title_size)
-
+'''
 
 if __name__ == '__main__':
-    print(font_sml_button)
+    pass
 
 '''
 def get_font_button_32():

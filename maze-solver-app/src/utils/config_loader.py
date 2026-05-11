@@ -17,7 +17,11 @@ def get_config() -> dict:
 
     try:
         with open(config_path, "r", encoding="utf-8") as file:
-            return json.load(file)
+            raw_config = json.load(file)
+            # Dictionary comprehension to skip keys starting with "_"
+            # This cleans the top-level of your JSON automatically
+            config = {k: v for k, v in raw_config.items() if not k.startswith("_")}
+            return config
         
     except FileNotFoundError:
         print(f"Warning: {config_path} not found. Using default settings.")
