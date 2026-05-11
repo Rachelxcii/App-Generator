@@ -2,10 +2,8 @@ import pygame
 from src.ui.elements import Button
 from src.utils.config_loader import get_config
 
-from src.ui.fonts_loader import (font_sml_button, font_mid_button, 
-                                 font_big_button, font_main_title)
 
-def main_screen(config_screen: dict) -> None:
+def main_screen(config_screen: dict, fonts: dict) -> None:
     """
     Renders the main menu of the Maze Generator & Solver.
     
@@ -20,13 +18,13 @@ def main_screen(config_screen: dict) -> None:
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Maze Generator & Solver")
     
-    font_title = font_main_title
+    font_title = fonts['main_title']
     clock = pygame.time.Clock()
+
 
     # 2. UI Layout Constants
     # Using layout logic based on screen dimensions for responsiveness
     buttons = []
-
 
     # 2.1 Main buttons: "Generator", "Solver", "Dashboard"
     buttons_name = ["Generator", "Solver", "Dashboard"]
@@ -38,10 +36,9 @@ def main_screen(config_screen: dict) -> None:
         # Horizontal space between buttons: space_b
         x_pos = left_space + (i * width_b) + (i * space_b)
         buttons.append(Button(x_pos, y_pos, width_b, height_b, nombre, 
-                              font_sml_button, (50, 50, 50), (100, 100, 100)))
+                              fonts['sml_button'], (50, 50, 50), (100, 100, 100)))
     
-
-    # 2.1 Auxiliar buttons: "Reset", "Exit"
+    # 2.2 Auxiliar buttons: "Reset", "Exit"
     buttons_name = ["Reset", "Exit"]
     
     width_b, height_b, space_b, left_space = 100, 50, 200, 150
@@ -51,7 +48,7 @@ def main_screen(config_screen: dict) -> None:
         # Horizontal space between buttons: space_b
         x_pos = left_space + (i * width_b) + (i * space_b)
         buttons.append(Button(x_pos, y_pos, width_b, height_b, nombre, 
-                              font_sml_button, (50, 50, 50), (100, 100, 100)))
+                              fonts['sml_button'], (50, 50, 50), (100, 100, 100)))
 
     is_running = True
     while is_running:

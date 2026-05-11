@@ -1,8 +1,7 @@
 import pygame
-
 from src.utils.config_loader import get_config
-from src.ui.font_loader import load_all_fonts
-#from src.ui.renderer import main_screen
+from src.ui.fonts_loader import load_all_fonts
+from src.ui.renderer import main_screen
 
 
 # Load configuration
@@ -17,5 +16,4 @@ fonts = load_all_fonts(config_fonts=config['fonts'])
 
 
 if __name__ == '__main__':
-    print(f'CONFIG: {config}')
-    #main_screen(config_screen=config['main_screen'])
+    main_screen(config_screen=config['main_screen'], fonts=fonts)
