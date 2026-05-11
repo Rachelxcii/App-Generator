@@ -14,7 +14,7 @@ if not pygame.font.get_init():
 # Load ui configuration
 window = config['window']
 colors = config['colors']
-fonts = load_all_fonts(config_fonts=config['fonts'])
+fonts = fonts_loader(config_fonts=config['fonts'])
 
 
 if __name__ == '__main__':
