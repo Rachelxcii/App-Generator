@@ -1,6 +1,6 @@
-import pygame 
-from src.ui.elements import Button
-from src.utils.config_loader import get_config
+import pygame
+
+from src.ui.loaders import buttons_loader
 
 
 def main_screen(
@@ -26,31 +26,8 @@ def main_screen(
 
     # 2 Load main screen buttons    
     # Using layout logic based on screen dimensions for responsiveness
-    buttons = []
-
-    for line_config in config_screen['buttons'].values():
-
-        buttons_name = line_config['names']
-        alignment = line_config['alignment']
-        width_button = line_config['size']['width']
-        height_button = line_config['size']['height']
-        dist_edge = line_config['dist_to_edge']
-        space_buttons = line_config['dist_between_buttons']
-        position = line_config['position']
-        
-        for i, name in enumerate(buttons_name):
-
-            x_pos, y_pos = position['x'], position['y']
-            if alignment == "horizontal":  
-                x_pos = dist_edge + (i * width_button) + (i * space_buttons)
-            elif alignment == "vertical":
-                y_pos = dist_edge + (i * height_button) + (i * space_buttons)
-
-            buttons.append(Button(
-                x_pos, y_pos, width_button, height_button, name, 
-                fonts['sml_button'], colors['button_base'], 
-                colors['button_hover']
-                ))
+    
+    buttons = buttons_loader(config=config_screen, colors=colors, fonts=fonts)
 
     is_running = True
     while is_running:

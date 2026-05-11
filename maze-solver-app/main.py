@@ -1,4 +1,5 @@
 import pygame
+
 from src.utils.config_loader import get_config
 from src.ui.loaders import fonts_loader
 from src.ui.renderer import main_screen
