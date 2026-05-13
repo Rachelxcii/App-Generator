@@ -1,4 +1,4 @@
-# --- Kinematic-Maze-Solver ---
+# Kinematic-Maze-Solver
 The pathfinding visualizer using python
 
 <h1 align="center"> --- WORK IN PROGRESS --- </h1>
