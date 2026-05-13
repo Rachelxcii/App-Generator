@@ -3,7 +3,7 @@ import pygame
 # TO-DO buttons generator
 
 class Button:
-    """
+    '''
     A class to represent an interactive UI button in Pygame.
 
     Attributes:
@@ -13,11 +13,11 @@ class Button:
         color_hover (tuple): RGB color of the button when the mouse is over it.
         color_curr (tuple): The current active color of the button.
         button_font (pygame.font.Font): The font object used to render the text.
-    """
+    '''
 
     def __init__(self, x: int, y: int, weight: int, height: int, text: str, 
                  font: pygame.font.Font, color_base: tuple, color_hover: tuple):
-        """
+        '''
         Initializes the Button with coordinates, dimensions, and styling.
 
         Args:
@@ -28,7 +28,7 @@ class Button:
             text (str): Text to be displayed on the button.
             color_base (tuple): Default RGB color.
             color_hover (tuple): Hover RGB color.
-        """
+        '''
 
         self.rect = pygame.Rect(x, y, weight, height)
         self.text = text
@@ -39,7 +39,7 @@ class Button:
 
 
     def drawing(self, screen: pygame.Surface) -> None:
-        """
+        '''
         Handles the rendering of the button and the hover logic.
 
         Args:
@@ -47,7 +47,7 @@ class Button:
 
         Returns:
             None
-        """
+        '''
 
         # Change button color when hovering
         pos_mouse = pygame.mouse.get_pos()
@@ -66,7 +66,7 @@ class Button:
 
 
     def button_clicked(self, event: pygame.event.Event) -> bool:
-        """
+        '''
         Checks if the left mouse button was clicked within the button's area.
 
         Args:
@@ -74,9 +74,29 @@ class Button:
 
         Returns:
             bool: True if the button was clicked, False otherwise.
-        """
+        '''
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
                 return True
         return False
+    
+
+class Title:
+
+    def __init__(self, name: str, size: int, pos_x: int, pos_y: int, 
+                 font: pygame.font.Font, color: tuple, win_width: int,
+                 win_height: int):
+        self.name = name
+        self.size = size
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.font = font
+        self.color = color
+        self.win_width = win_width
+        self.win_height = win_height
+
+    def drawing(self, screen):
+        txt_title = self.font.render(self.name, True, self.color)
+        pos_x = self.win_width // 2 - txt_title.get_width() // 2
+        screen.blit(txt_title, (pos_x, self.pos_y))

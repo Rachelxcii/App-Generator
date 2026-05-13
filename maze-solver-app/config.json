@@ -19,8 +19,8 @@
         "background": [30, 30, 30],
         "button_base": [50, 50, 50],
         "button_hover": [100, 100, 100],
-        "title_txt": [200, 200, 200],
-        "white_txt": [255, 255, 255]
+        "white_txt": [255, 255, 255],
+        "title_main_screen": [200, 200, 200]
     },
 
     "fonts": {
@@ -36,7 +36,7 @@
             "file": "SupermercadoOne-Regular.ttf",
             "size": 32
         },
-        "main_title": {
+        "title_main_screen": {
             "file": "SupermercadoOne-Regular.ttf",
             "size": 100
         }
@@ -45,9 +45,11 @@
     "main_screen": {
         "has_return": false,
         "title": {
-            "name": "Maze Generator & Solver",
-            "size": 100,
-            "position": {"x": 100}
+            "name": "MAZE SOLVER",
+            "size": 72,
+            "position": {"x": 100, "y": 50},
+            "font": "title_main_screen",
+            "color": "title_main_screen"
         },
         "buttons": {
             "line_1": {
