@@ -66,4 +66,4 @@ class SolverScreen:
 
 
 if __name__ == "__main__":
-    main_screen()
+    pass
