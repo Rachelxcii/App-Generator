@@ -1,6 +1,6 @@
 import pygame
 
-# TO-DO buttons generator
+# TO-DO buttons generator - what was this?
 
 class Button:
     '''

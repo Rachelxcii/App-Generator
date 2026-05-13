@@ -9,8 +9,8 @@ def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
     Parses button configuration data to instantiate UI Button objects.
     
     This function handles the geometric distribution of buttons based on 
-    alignment settings (horizontal or vertical) and applies styling 
-    from global color and font dictionaries.
+    alignment settings (horizontal or vertical) and grouped in blocks.
+    And applies styling from global color and font dictionaries.
 
     Args:
         config (dict): Nested dictionary containing button configuration.
@@ -23,18 +23,18 @@ def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
 
     buttons = []
 
-    for line_cfg in config.values():
+    for block_cfg in config.values():
 
-        buttons_name = line_cfg['names']
-        alignment = line_cfg['alignment']
-        width_button = line_cfg['size']['width']
-        height_button = line_cfg['size']['height']
-        dist_edge = line_cfg['dist_to_edge']
-        space_buttons = line_cfg['dist_between_buttons']
-        position = line_cfg['position']
-        font = fonts[line_cfg['font']]
-        color_base = colors[line_cfg['color']['base']]
-        color_hover = colors[line_cfg['color']['hover']]
+        buttons_name = block_cfg['names']
+        alignment = block_cfg['alignment']
+        width_button = block_cfg['size']['width']
+        height_button = block_cfg['size']['height']
+        dist_edge = block_cfg['dist_to_edge']
+        space_buttons = block_cfg['dist_between_buttons']
+        position = block_cfg['position']
+        font = fonts[block_cfg['font']]
+        color_base = colors[block_cfg['color']['base']]
+        color_hover = colors[block_cfg['color']['hover']]
 
         
         for i, name in enumerate(buttons_name):

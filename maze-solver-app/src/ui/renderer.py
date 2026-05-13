@@ -2,8 +2,6 @@ import pygame
 
 from src.ui.loaders import title_loader, buttons_loader 
 
-import pygame
-
 
 class Screen:
     # TO-DO clase base que contenga: draw, handle events.
