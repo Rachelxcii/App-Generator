@@ -16,7 +16,8 @@ class Button:
     '''
 
     def __init__(self, x: int, y: int, weight: int, height: int, text: str, 
-                 font: pygame.font.Font, color_base: tuple, color_hover: tuple):
+                 font: pygame.font.Font, color_base: tuple, color_hover: tuple,
+                 actions: list):
         '''
         Initializes the Button with coordinates, dimensions, and styling.
 

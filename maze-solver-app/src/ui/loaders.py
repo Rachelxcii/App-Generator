@@ -25,7 +25,7 @@ def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
 
     for block_cfg in config.values():
 
-        buttons_name = block_cfg['names']
+        buttons_name = block_cfg['buttons']
         alignment = block_cfg['alignment']
         width_button = block_cfg['size']['width']
         height_button = block_cfg['size']['height']
@@ -44,10 +44,14 @@ def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
                 x_pos = dist_edge + (i * width_button) + (i * space_buttons)
             elif alignment == "vertical":
                 y_pos = dist_edge + (i * height_button) + (i * space_buttons)
+            
+            actions = buttons_name[name]
+            print(f'BUTTON: {name} - ACTIONS: {actions}')
 
             buttons.append(Button(
-                x_pos, y_pos, width_button, height_button, name, font, 
-                color_base, color_hover
+                x=x_pos, y=y_pos, weight=width_button, height=height_button, 
+                text=name, font=font, color_base=color_base, 
+                color_hover=color_hover, actions=actions
                 ))
             
     return buttons
