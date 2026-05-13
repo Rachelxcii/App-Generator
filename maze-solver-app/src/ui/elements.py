@@ -83,10 +83,36 @@ class Button:
     
 
 class Title:
+    '''
+    A class to represent and render a static or dynamic title text in Pygame.
+
+    Attributes:
+        name (str): The text content to be displayed as a title.
+        size (int): The font size (used for logical reference).
+        pos_x (int): The initial X-coord, may be overridden by centering logic.
+        pos_y (int): The Y-coord of the title.
+        font (pygame.font.Font): The font object used for rendering.
+        color (tuple): RGB color of the title text.
+        win_width (int): Current width of the application window for centering.
+        win_height (int): Current height of the application window.
+    '''
 
     def __init__(self, name: str, size: int, pos_x: int, pos_y: int, 
                  font: pygame.font.Font, color: tuple, win_width: int,
                  win_height: int):
+        '''
+        Initializes the Title with text content, styling, and window context.
+
+        Args:
+            name (str): The string to display.
+            size (int): Reference size of the font.
+            pos_x (int): Targeted X position.
+            pos_y (int): Targeted Y position.
+            font (pygame.font.Font): Pre-loaded Pygame font object.
+            color (tuple): RGB color tuple for the text.
+            win_width (int): Window width used to calculate horizontal centering.
+            win_height (int): Window height for vertical context.
+        '''
         self.name = name
         self.size = size
         self.pos_x = pos_x
@@ -97,6 +123,15 @@ class Title:
         self.win_height = win_height
 
     def drawing(self, screen):
+        '''
+        Renders title text and draws it centered horizontally on the screen.
+
+        Args:
+            screen (pygame.Surface): The surface where title will be blitted.
+
+        Returns:
+            None
+        '''
         txt_title = self.font.render(self.name, True, self.color)
         pos_x = self.win_width // 2 - txt_title.get_width() // 2
         screen.blit(txt_title, (pos_x, self.pos_y))

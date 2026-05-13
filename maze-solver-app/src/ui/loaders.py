@@ -6,8 +6,21 @@ from src.ui.elements import Title, Button
 
 def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
     '''
-    config = only buttons config
+    Parses button configuration data to instantiate UI Button objects.
+    
+    This function handles the geometric distribution of buttons based on 
+    alignment settings (horizontal or vertical) and applies styling 
+    from global color and font dictionaries.
+
+    Args:
+        config (dict): Nested dictionary containing button configuration.
+        colors (dict): Global RGB color palette mapping.
+        fonts (dict): Pre-loaded pygame.font.Font objects.
+
+    Returns:
+        list: A collection of initialized Button instances.
     '''
+
     buttons = []
 
     for line_cfg in config.values():
@@ -42,8 +55,19 @@ def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
 
 def fonts_loader(config: dict) -> dict:
     '''
-    config = only fonts config
+    Resolves filesystem paths and initializes Pygame font assets.
+
+    Uses pathlib for robust cross-platform path resolution, moving from the 
+    current script location to the project root's asset directory.
+
+    Args:
+        config (dict): Mapping of font keys to file names and point sizes.
+
+    Returns:
+        dict: A dictionary where keys match config and values are 
+        pygame.font.Font objects.
     '''
+
     # Locate root (from maze-solver-app/src/utils/ to maze-solver-app/)
     root_path = Path(__file__).resolve().parent.parent.parent
     fonts_path = root_path / 'assets' / 'fonts' 
@@ -51,15 +75,27 @@ def fonts_loader(config: dict) -> dict:
     fonts = {}
     for key, data in config.items():
         path = fonts_path / data['file']
+        # Convert Path object to string for Pygame compatibility
         fonts[key] = pygame.font.Font(str(path), data['size'])
 
     return fonts
 
 
-def title_loader(config:dict, colors: dict, fonts: dict, window: dict) -> Title:
+def title_loader(config:dict, colors: dict, fonts: dict, 
+                 window: dict) -> Title:
     '''
-    config = only title config
+    Initializes the Title UI component with window context for centering logic.
+
+    Args:
+        config (dict): Current screen title configuration.
+        colors (dict): Global RGB color palette mapping.
+        fonts (dict): Pre-loaded pygame.font.Font objects.
+        window (dict): Window dimensions for horizontal alignment calculations.
+
+    Returns:
+        Title: An instance of the Title class ready for rendering.
     '''
+
     title_name = config['name']
     title_size = config['size']
     title_pos_x = config['position']['x']
