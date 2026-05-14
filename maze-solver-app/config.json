@@ -52,8 +52,24 @@
             "color": "title_main_screen"
         },
         "buttons": {
-            "line_1": {
-                "names": ["Generator", "Solver", "Dashboard"],
+            "block_1": {
+                "buttons": {
+                    "Generator": {
+                        "actions": ["goto"],
+                        "redirection": "GENERATOR-SCREEN",
+                        "functions": [""]
+                    }, 
+                    "Solver": {
+                        "actions": ["goto"],
+                        "redirection": "SOLVER-SCREEN",
+                        "functions": [""]
+                    }, 
+                    "Dashboard": {
+                        "actions": ["goto"],
+                        "redirection": "DASHBOARD-SCREEN",
+                        "functions": [""]
+                    }
+                },
                 "alignment": "horizontal",
                 "size": {"width": 150, "height": 150},
                 "dist_to_edge": 50,
@@ -65,8 +81,19 @@
                     "hover": "button_hover"
                 }
             },
-            "line_2": {
-                "names": ["Reset", "Exit"],
+            "block_2": {
+                "buttons": {
+                    "Reset": {
+                        "actions": ["function"],
+                        "redirection": "",
+                        "functions": ["reset"]
+                    }, 
+                    "Exit": {
+                        "actions": ["function"],
+                        "redirection": "",
+                        "functions": ["exit"]
+                    }
+                },
                 "alignment": "horizontal",
                 "size": {"width": 100, "height": 50},
                 "dist_to_edge": 150,

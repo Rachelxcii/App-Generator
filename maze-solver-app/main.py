@@ -46,7 +46,7 @@ def run_app():
         'MAIN-SCREEN': MainScreen(window=window_cfg, colors=colors_cfg, 
                            fonts=fonts_cfg, config=main_screen_cfg),
         'GENERATOR-SCREEN': DashboardScreen(),
-        'SORVER-SCREEN': SolverScreen(),
+        'SOLVER-SCREEN': SolverScreen(),
         'DASHBOARD-SCREEN': DashboardScreen()
     }
     
