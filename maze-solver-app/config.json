@@ -57,7 +57,7 @@
         },
         "buttons": {
             "block_1": {
-                "elements": {
+                "buttons": {
                     "Generator": {
                         "name": "GENERATOR",
                         "is_image": false,
@@ -92,7 +92,7 @@
                 }
             },
             "block_2": {
-                "elements": {
+                "buttons": {
                     "Reset": {
                         "name": "RESET",
                         "is_image": false,
