@@ -17,7 +17,7 @@ class Button:
 
     def __init__(self, x: int, y: int, weight: int, height: int, text: str, 
                  font: pygame.font.Font, color_base: tuple, color_hover: tuple,
-                 actions: list):
+                 action_data: dict):
         '''
         Initializes the Button with coordinates, dimensions, and styling.
 
@@ -37,6 +37,10 @@ class Button:
         self.color_hover = color_hover
         self.color_curr = color_base
         self.button_font = font
+        
+        self.action_type = action_data.get("actions", [])
+        self.redirection = action_data.get("redirection", "")
+        self.functions = action_data.get("functions", [])
 
 
     def drawing(self, screen: pygame.Surface) -> None:
@@ -64,6 +68,18 @@ class Button:
         text_image = self.button_font.render(self.text, True, (255, 255, 255))
         text_rect = text_image.get_rect(center=self.rect.center)
         screen.blit(text_image, text_rect)
+
+    
+    def get_actions(self):
+        '''
+        Returns a dict with infomation about what MUST happen if a button is 
+        clicked.
+        '''
+        return {
+            "type": self.action_type,
+            "goto": self.redirection,
+            "call": self.functions
+        }
 
 
     def button_clicked(self, event: pygame.event.Event) -> bool:

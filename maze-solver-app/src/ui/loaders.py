@@ -45,13 +45,12 @@ def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
             elif alignment == "vertical":
                 y_pos = dist_edge + (i * height_button) + (i * space_buttons)
             
-            actions = buttons_name[name]
-            print(f'BUTTON: {name} - ACTIONS: {actions}')
+            action_data = buttons_name[name]
 
             buttons.append(Button(
                 x=x_pos, y=y_pos, weight=width_button, height=height_button, 
                 text=name, font=font, color_base=color_base, 
-                color_hover=color_hover, actions=actions
+                color_hover=color_hover, action_data=action_data
                 ))
             
     return buttons
