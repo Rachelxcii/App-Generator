@@ -25,7 +25,7 @@ def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
 
     for block_cfg in config.values():
 
-        buttons_name = block_cfg['buttons']
+        buttons_name = block_cfg['elements']
         alignment = block_cfg['alignment']
         width_button = block_cfg['size']['width']
         height_button = block_cfg['size']['height']

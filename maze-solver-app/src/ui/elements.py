@@ -1,6 +1,5 @@
 import pygame
 
-# TO-DO buttons generator - what was this?
 
 class Button:
     '''
@@ -61,7 +60,7 @@ class Button:
         else:
             self.color_curr = self.color_base
 
-        # Draw button rectangle
+        # Draw button rectangle, for collisions
         pygame.draw.rect(screen, self.color_curr, self.rect, border_radius=8)
         
         # Render centered text

@@ -57,19 +57,24 @@
         },
         "buttons": {
             "block_1": {
-                "buttons": {
+                "elements": {
                     "Generator": {
                         "name": "GENERATOR",
+                        "is_image": false,
                         "actions": ["goto"],
                         "redirection": "GENERATOR-SCREEN",
                         "functions": [""]
                     }, 
                     "Solver": {
+                        "name": "SOLVER",
+                        "is_image": false,
                         "actions": ["goto"],
                         "redirection": "SOLVER-SCREEN",
                         "functions": [""]
                     }, 
                     "Dashboard": {
+                        "name": "DASHBOARD",
+                        "is_image": false,
                         "actions": ["goto"],
                         "redirection": "DASHBOARD-SCREEN",
                         "functions": [""]
@@ -87,13 +92,17 @@
                 }
             },
             "block_2": {
-                "buttons": {
+                "elements": {
                     "Reset": {
+                        "name": "RESET",
+                        "is_image": false,
                         "actions": ["function"],
                         "redirection": "",
                         "functions": ["reset"]
                     }, 
                     "Exit": {
+                        "name": "EXIT",
+                        "is_image": false,
                         "actions": ["function"],
                         "redirection": "",
                         "functions": ["exit"]
