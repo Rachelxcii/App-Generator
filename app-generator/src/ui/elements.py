@@ -32,19 +32,24 @@ class Button:
         y = button_cfg['position']['y']
         width = button_cfg['size']['width']
         height = button_cfg['size']['height']
+        fonts = display_cfg['fonts']
+        colors = display_cfg['colors']
 
         if self.subtype == 'text':
             self.text = button_cfg['text']
-            self.font = display_cfg['fonts'][button_cfg['font']]
-            self.color_base = display_cfg['colors'][button_cfg['color']['base']]
-            self.color_hover = display_cfg['colors'][button_cfg['color']['hover']]
-            self.color_curr = display_cfg['colors'][button_cfg['color']['base']]
-
-            print(f'DISPLAY CONFIG: {display_cfg}')
-            print(f'FONT TEXT: {self.font}')
+            self.font = fonts[button_cfg['font']]
+            self.color_base = colors[button_cfg['color']['base']]
+            self.color_hover = colors[button_cfg['color']['hover']]
+            self.color_curr = colors[button_cfg['color']['base']]
             
         elif self.subtype == 'image':
-            self.image = button_cfg['image']
+            images_path = display_cfg['paths']['images_dir']
+            base_path = images_path / button_cfg['image']['base']
+            hover_path = images_path / button_cfg['image']['hover']
+
+            self.image_base = pygame.image.load(base_path).convert_alpha()
+            self.image_hover = pygame.image.load(hover_path).convert_alpha()
+            
         
         print(f'BUTTON CONFIG: {button_cfg}')
         
@@ -69,7 +74,24 @@ class Button:
             None
         '''
 
-        # Change button color when hovering
+        pos_mouse = pygame.mouse.get_pos()
+        is_hovering = self.rect.collidepoint(pos_mouse)
+
+        if self.subtype == 'text':
+            self.color_curr = self.color_hover if is_hovering else self.color_base
+            pygame.draw.rect(screen, self.color_curr, self.rect, border_radius=8)
+            
+            text_image = self.font.render(self.text, True, (255, 255, 255))
+            text_rect = text_image.get_rect(center=self.rect.center)
+            screen.blit(text_image, text_rect)
+
+        elif self.subtype == 'image':
+            img_to_draw = self.image_hover if is_hovering else self.image_base
+            
+            img_rect = img_to_draw.get_rect(center=self.rect.center)
+            screen.blit(img_to_draw, img_rect)
+
+        '''# Change button color when hovering
         pos_mouse = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos_mouse):
             self.color_curr = self.color_hover
@@ -82,7 +104,7 @@ class Button:
         # Render centered text
         text_image = self.font.render(self.text, True, (255, 255, 255))
         text_rect = text_image.get_rect(center=self.rect.center)
-        screen.blit(text_image, text_rect)
+        screen.blit(text_image, text_rect)'''
 
     
     def get_actions(self) -> dict:

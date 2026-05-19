@@ -3,10 +3,25 @@ import pygame
 from src.utils.config_loader import get_config
 from src.ui.loaders import fonts_loader
 from src.ui.screen_renderer import screens_loader
+from src.utils.path_loader import get_base_path
 
 
 # Load configuration
 config = get_config()
+
+# Load path app #TO-DO improve the path logic
+BASE_DIR = get_base_path()
+ASSETS_DIR = BASE_DIR / "App-Generator" / "assets"
+IMAGES_DIR = ASSETS_DIR / "images"
+FONTS_DIR = ASSETS_DIR / "fonts"
+
+paths = {
+    'BASE_DIR': get_base_path(),
+    'ASSETS_DIR': ASSETS_DIR,
+    'images_dir': IMAGES_DIR,
+    'fonts_dir': FONTS_DIR,
+}
+
 
 # Initialize pygame font
 if not pygame.font.get_init():
@@ -14,7 +29,8 @@ if not pygame.font.get_init():
 
 # Load ui configuration
 display_cfg = config['display']
-display_cfg['fonts'] = fonts_loader(fonts_cfg=config['display']['fonts'])
+display_cfg['paths'] = paths
+display_cfg['fonts'] = fonts_loader(display_cfg=config['display'])
 screens_cfg = {k: v for k, v in config.items() if k.endswith("_screen")}
 
 # --- NEW CODE ---

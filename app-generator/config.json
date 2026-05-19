@@ -51,10 +51,7 @@
                 "size": {"width": 150, "height": 150},
                 "text": "SECONDARY",
                 "font": "sml_button",
-                "color": {"base": "button_base","hover": "button_hover"},
-                "image": "",
-                "has_redirection": true,
-                "has_function": false,
+                "color": {"base": "button_base", "hover": "button_hover"},
                 "redirection": "SECONDARY-SCREEN",
                 "functions": [""]
             },
@@ -64,6 +61,15 @@
                 "position": {"x": 100, "y": 50},
                 "font": "title_main_screen",
                 "color": "title_main_screen"
+            },
+            "return_button": {
+                "type": "button",
+                "subtype": "image",
+                "position" : {"x": 0, "y": 100},
+                "size": {"width": 150, "height": 150},
+                "image": {"base": "arrow_back.png", "hover": "arrow_back.png"},
+                "redirection": "SECONDARY-SCREEN",
+                "functions": [""]
             }
         }
     },

@@ -69,7 +69,7 @@ def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
     return texts
 
 
-def fonts_loader(fonts_cfg: dict) -> dict:
+def fonts_loader(display_cfg: dict) -> dict:
     '''
     Resolves filesystem paths and initializes Pygame font assets.
 
@@ -83,13 +83,11 @@ def fonts_loader(fonts_cfg: dict) -> dict:
         dict: A dictionary where keys match config and values are 
         pygame.font.Font objects.
     '''
-
-    # Locate root (from maze-solver-app/src/utils/ to maze-solver-app/)
-    root_path = Path(__file__).resolve().parent.parent.parent
-    fonts_path = root_path / 'assets' / 'fonts' 
+    
+    fonts_path = display_cfg['paths']['fonts_dir']
 
     fonts = {}
-    for key, data in fonts_cfg.items():
+    for key, data in display_cfg['fonts'].items():
         path = fonts_path / data['file']
         # Convert Path object to string for Pygame compatibility
         fonts[key] = pygame.font.Font(str(path), data['size'])
