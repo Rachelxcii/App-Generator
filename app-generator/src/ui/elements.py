@@ -14,35 +14,51 @@ class Button:
         button_font (pygame.font.Font): The font object used to render the text.
     '''
 
-    def __init__(self, x: int, y: int, weight: int, height: int, text: str, 
-                 font: pygame.font.Font, color_base: tuple, color_hover: tuple,
-                 action_data: dict):
+    def __init__(self, display_cfg: dict, button_cfg: dict):
         '''
         Initializes the Button with coordinates, dimensions, and styling.
 
         Args:
             x (int): X-coordinate of the top-left corner.
             y (int): Y-coordinate of the top-left corner.
-            weight (int): Width of the button.
+            width (int): Width of the button.
             height (int): Height of the button.
             text (str): Text to be displayed on the button.
             color_base (tuple): Default RGB color.
             color_hover (tuple): Hover RGB color.
         '''
+        self.subtype = button_cfg['subtype']
+        x = button_cfg['position']['x']
+        y = button_cfg['position']['y']
+        width = button_cfg['size']['width']
+        height = button_cfg['size']['height']
 
-        self.rect = pygame.Rect(x, y, weight, height)
-        self.text = text
-        self.color_base = color_base
-        self.color_hover = color_hover
-        self.color_curr = color_base
-        self.button_font = font
+        if self.subtype == 'text':
+            self.text = button_cfg['text']
+            self.font = display_cfg['fonts'][button_cfg['font']]
+            self.color_base = display_cfg['colors'][button_cfg['color']['base']]
+            self.color_hover = display_cfg['colors'][button_cfg['color']['hover']]
+            self.color_curr = display_cfg['colors'][button_cfg['color']['base']]
+
+            print(f'DISPLAY CONFIG: {display_cfg}')
+            print(f'FONT TEXT: {self.font}')
+            
+        elif self.subtype == 'image':
+            self.image = button_cfg['image']
         
-        self.action_type = action_data.get("actions", [])
-        self.redirection = action_data.get("redirection", "")
-        self.functions = action_data.get("functions", [])
+        print(f'BUTTON CONFIG: {button_cfg}')
+        
+        self.rect = pygame.Rect(x, y, width, height)
+
+        self.redirection = button_cfg['redirection']
+        self.functions = button_cfg['functions']
 
 
-    def drawing(self, screen: pygame.Surface) -> None:
+    def _type_detector():
+        pass
+
+
+    def draw(self, screen: pygame.Surface) -> None:
         '''
         Handles the rendering of the button and the hover logic.
 
@@ -64,20 +80,19 @@ class Button:
         pygame.draw.rect(screen, self.color_curr, self.rect, border_radius=8)
         
         # Render centered text
-        text_image = self.button_font.render(self.text, True, (255, 255, 255))
+        text_image = self.font.render(self.text, True, (255, 255, 255))
         text_rect = text_image.get_rect(center=self.rect.center)
         screen.blit(text_image, text_rect)
 
     
-    def get_actions(self):
+    def get_actions(self) -> dict:
         '''
         Returns a dict with infomation about what MUST happen if a button is 
         clicked.
         '''
         return {
-            "type": self.action_type,
-            "goto": self.redirection,
-            "call": self.functions
+            "redirection": self.redirection,
+            "functions": self.functions
         }
 
 
@@ -96,58 +111,54 @@ class Button:
             if self.rect.collidepoint(event.pos):
                 return True
         return False
+
+
+class Text:
+        '''
+        A class to represent and render a static or dynamic title text in Pygame.
+
+        Attributes:
+            name (str): The text content to be displayed as a title.
+            size (int): The font size (used for logical reference).
+            pos_x (int): The initial X-coord, may be overridden by centering logic.
+            pos_y (int): The Y-coord of the title.
+            font (pygame.font.Font): The font object used for rendering.
+            color (tuple): RGB color of the title text.
+            win_width (int): Current width of the application window for centering.
+            win_height (int): Current height of the application window.
+        '''
+
+        def __init__(self, display_cfg: dict, text_cfg: dict):
+            '''
+            Initializes the Title with text content, styling, and window context.
+
+            Args:
+                name (str): The string to display.
+                size (int): Reference size of the font.
+                pos_x (int): Targeted X position.
+                pos_y (int): Targeted Y position.
+                font (pygame.font.Font): Pre-loaded Pygame font object.
+                color (tuple): RGB color tuple for the text.
+                win_width (int): Window width used to calculate horizontal centering.
+                win_height (int): Window height for vertical context.
+            '''
+            self.text = text_cfg['text']
+            self.pos_x = text_cfg['position']['x']
+            self.pos_y = text_cfg['position']['y']
+            self.font = display_cfg['fonts'][text_cfg['font']]
+            self.color = display_cfg['colors'][text_cfg['color']]
+
+        def draw(self, screen) -> None:
+            '''
+            Renders title text and draws it centered horizontally on the screen.
+
+            Args:
+                screen (pygame.Surface): The surface where title will be blitted.
+
+            Returns:
+                None
+            '''
+            text_format = self.font.render(self.text, True, self.color)
+            screen.blit(text_format, (self.pos_x, self.pos_y))
+
     
-
-class Title:
-    '''
-    A class to represent and render a static or dynamic title text in Pygame.
-
-    Attributes:
-        name (str): The text content to be displayed as a title.
-        size (int): The font size (used for logical reference).
-        pos_x (int): The initial X-coord, may be overridden by centering logic.
-        pos_y (int): The Y-coord of the title.
-        font (pygame.font.Font): The font object used for rendering.
-        color (tuple): RGB color of the title text.
-        win_width (int): Current width of the application window for centering.
-        win_height (int): Current height of the application window.
-    '''
-
-    def __init__(self, name: str, size: int, pos_x: int, pos_y: int, 
-                 font: pygame.font.Font, color: tuple, win_width: int,
-                 win_height: int):
-        '''
-        Initializes the Title with text content, styling, and window context.
-
-        Args:
-            name (str): The string to display.
-            size (int): Reference size of the font.
-            pos_x (int): Targeted X position.
-            pos_y (int): Targeted Y position.
-            font (pygame.font.Font): Pre-loaded Pygame font object.
-            color (tuple): RGB color tuple for the text.
-            win_width (int): Window width used to calculate horizontal centering.
-            win_height (int): Window height for vertical context.
-        '''
-        self.name = name
-        self.size = size
-        self.pos_x = pos_x
-        self.pos_y = pos_y
-        self.font = font
-        self.color = color
-        self.win_width = win_width
-        self.win_height = win_height
-
-    def drawing(self, screen):
-        '''
-        Renders title text and draws it centered horizontally on the screen.
-
-        Args:
-            screen (pygame.Surface): The surface where title will be blitted.
-
-        Returns:
-            None
-        '''
-        txt_title = self.font.render(self.name, True, self.color)
-        pos_x = self.win_width // 2 - txt_title.get_width() // 2
-        screen.blit(txt_title, (pos_x, self.pos_y))

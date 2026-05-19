@@ -9,151 +9,88 @@
             }
         }, 
         
-    "window": {
+    "display": {
         "width": 700,
         "height": 500,
-        "fps": 60
-    },
-
-     "colors": {
-        "background": [30, 30, 30],
-        "button_base": [50, 50, 50],
-        "button_hover": [100, 100, 100],
-        "white_txt": [255, 255, 255],
-        "title_main_screen": [200, 200, 200]
-    },
-
-    "fonts": {
-        "sml_button": {
-            "file": "SupermercadoOne-Regular.ttf",
-            "size": 32
+        "fps": 60,
+        "init_screen": "MAIN-SCREEN",
+        "colors": {
+            "background": [28, 27, 27],
+            "button_base": [67, 64, 57],
+            "button_hover": [72, 72, 74],
+            "plain_txt": [228, 215, 183],
+            "title_main_screen": [228, 215, 183]
         },
-        "mid_button": {
-            "file": "SupermercadoOne-Regular.ttf",
-            "size": 32
-        },
-        "big_button": {
-            "file": "SupermercadoOne-Regular.ttf",
-            "size": 32
-        },
-        "title_main_screen": {
-            "file": "SupermercadoOne-Regular.ttf",
-            "size": 100
+        "fonts": {
+            "sml_button": {
+                "file": "SupermercadoOne-Regular.ttf",
+                "size": 32
+            },
+            "mid_button": {
+                "file": "SupermercadoOne-Regular.ttf",
+                "size": 32
+            },
+            "big_button": {
+                "file": "SupermercadoOne-Regular.ttf",
+                "size": 32
+            },
+            "title_main_screen": {
+                "file": "SupermercadoOne-Regular.ttf",
+                "size": 100
+            }
         }
     },
 
     "main_screen": {
-        "name": "MAIN-SCREEN",
-        "return_button": {
-            "has_return": false,
-            "redirection": "None"
-        },
-        "title": {
-            "name": "MAZE SOLVER",
-            "size": 72,
-            "position": {"x": 100, "y": 50},
-            "font": "title_main_screen",
-            "color": "title_main_screen"
-        },
-        "buttons": {
-            "block_1": {
-                "buttons": {
-                    "Generator": {
-                        "name": "GENERATOR",
-                        "is_image": false,
-                        "actions": ["goto"],
-                        "redirection": "GENERATOR-SCREEN",
-                        "functions": [""]
-                    }, 
-                    "Solver": {
-                        "name": "SOLVER",
-                        "is_image": false,
-                        "actions": ["goto"],
-                        "redirection": "SOLVER-SCREEN",
-                        "functions": [""]
-                    }, 
-                    "Dashboard": {
-                        "name": "DASHBOARD",
-                        "is_image": false,
-                        "actions": ["goto"],
-                        "redirection": "DASHBOARD-SCREEN",
-                        "functions": [""]
-                    }
-                },
-                "alignment": "horizontal",
+        "ID": "MAIN-SCREEN",
+        "elements": {
+            "secondary_button": {
+                "type": "button",
+                "subtype": "text",
+                "position" : {"x": 0, "y": 0},
                 "size": {"width": 150, "height": 150},
-                "dist_to_edge": 50,
-                "dist_between_buttons": 75,
-                "position": {"x": 0, "y": 250},
+                "text": "SECONDARY",
                 "font": "sml_button",
-                "color": {
-                    "base": "button_base",
-                    "hover": "button_hover"
-                }
+                "color": {"base": "button_base","hover": "button_hover"},
+                "image": "",
+                "has_redirection": true,
+                "has_function": false,
+                "redirection": "SECONDARY-SCREEN",
+                "functions": [""]
             },
-            "block_2": {
-                "buttons": {
-                    "Reset": {
-                        "name": "RESET",
-                        "is_image": false,
-                        "actions": ["function"],
-                        "redirection": "",
-                        "functions": ["reset"]
-                    }, 
-                    "Exit": {
-                        "name": "EXIT",
-                        "is_image": false,
-                        "actions": ["function"],
-                        "redirection": "",
-                        "functions": ["exit"]
-                    }
-                },
-                "alignment": "horizontal",
-                "size": {"width": 100, "height": 50},
-                "dist_to_edge": 150,
-                "dist_between_buttons": 200,
-                "position": {"x": 0, "y": 425},
-                "font": "sml_button",
-                "color": {
-                    "base": "button_base",
-                    "hover": "button_hover"
-                }
+            "screen_title": {
+                "type": "text",
+                "text": "APP GENERATOR",
+                "position": {"x": 100, "y": 50},
+                "font": "title_main_screen",
+                "color": "title_main_screen"
             }
         }
     },
 
     "generator_screen": {
-        "name": "GENERATOR-SCREEN",
-        "return_button": {
-            "has_return": false,
-            "redirection": "None"
-        },
-        "title": {
-            "name": "GENERATOR",
-            "size": 72,
-            "position": {"x": 100, "y": 50},
-            "font": "title_main_screen",
-            "color": "title_main_screen"
-        },
-        "buttons": {
-            "block_1": {
-                "buttons": {
-                    "Generator": {
-                        "actions": ["goto"],
-                        "redirection": "MAIN-SCREEN",
-                        "functions": [""]
-                    }
-                },
-                "alignment": "horizontal",
+        "ID": "SECONDARY-SCREEN",
+        "elements": {
+            "to_main_button": {
+                "type": "button",
+                "subtype": "text",
+                "position" : {"x": 0, "y": 0},
                 "size": {"width": 150, "height": 150},
-                "dist_to_edge": 50,
-                "dist_between_buttons": 75,
-                "position": {"x": 0, "y": 250},
+                "text": "MAIN",
                 "font": "sml_button",
-                "color": {
-                    "base": "button_base",
-                    "hover": "button_hover"
-                }
+                "color": {"base": "button_base","hover": "button_hover"},
+                "image": "",
+                "has_redirection": true,
+                "has_function": false,
+                "redirection": "MAIN-SCREEN",
+                "functions": [""]
+            },
+            "screen_title": {
+                "type": "text",
+                "text": "SECONDARY",
+                "position": {"x": 100, "y": 50},
+                "font": "title_main_screen",
+                "color": "title_main_screen"
             }
         }
     }

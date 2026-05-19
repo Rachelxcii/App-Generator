@@ -1,21 +1,41 @@
 import pygame
 from pathlib import Path
 
-from src.ui.elements import Title, Button
+from src.ui.elements import Button, Text
 
 
-# TO-DO: crear la funcion "element_detector()" en loaders.py 
-# Esta funcion clasifica el tipo de elemento y lo deriva a su loader
-# Luego el loader especifico llama a la clase del mismo nombre alojada en elements.
+def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
 
+    categories = {'button': [], 'image': [], 'text': []}
 
-def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
+    for el in elements_cfg:
+        categories[elements_cfg[el]['type']].append(elements_cfg[el])
+
+    buttons_cfg = categories['button']
+    images_cfg = categories['image']
+    texts_cfg = categories['text']
+
+    output = []
+
+    if buttons_cfg:
+        buttons = buttons_loader(display_cfg=display_cfg,
+                                     buttons_cfg=buttons_cfg)
+        output += buttons
+        
+    if images_cfg:
+        images = []
+        output += images
+    
+    if texts_cfg:
+        texts = texts_loader(display_cfg=display_cfg, texts_cfg=texts_cfg)
+        output += texts
+    
+    return output
+    
+    
+def buttons_loader(display_cfg: dict, buttons_cfg: dict) -> list:
     '''
     Parses button configuration data to instantiate UI Button objects.
-    
-    This function handles the geometric distribution of buttons based on 
-    alignment settings (horizontal or vertical) and grouped in blocks.
-    And applies styling from global color and font dictionaries.
 
     Args:
         config (dict): Nested dictionary containing button configuration.
@@ -25,43 +45,31 @@ def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
     Returns:
         list: A collection of initialized Button instances.
     '''
-
     buttons = []
-
-    for block_cfg in config.values():
-
-        buttons_name = block_cfg['buttons']
-        alignment = block_cfg['alignment']
-        width_button = block_cfg['size']['width']
-        height_button = block_cfg['size']['height']
-        dist_edge = block_cfg['dist_to_edge']
-        space_buttons = block_cfg['dist_between_buttons']
-        position = block_cfg['position']
-        font = fonts[block_cfg['font']]
-        color_base = colors[block_cfg['color']['base']]
-        color_hover = colors[block_cfg['color']['hover']]
-
-        
-        for i, name in enumerate(buttons_name):
-
-            x_pos, y_pos = position['x'], position['y']
-            if alignment == "horizontal":  
-                x_pos = dist_edge + (i * width_button) + (i * space_buttons)
-            elif alignment == "vertical":
-                y_pos = dist_edge + (i * height_button) + (i * space_buttons)
-            
-            action_data = buttons_name[name]
-
-            buttons.append(Button(
-                x=x_pos, y=y_pos, weight=width_button, height=height_button, 
-                text=name, font=font, color_base=color_base, 
-                color_hover=color_hover, action_data=action_data
-                ))
-            
+    for button_cfg in buttons_cfg:
+        buttons.append(Button(display_cfg=display_cfg, button_cfg=button_cfg))
     return buttons
 
 
-def fonts_loader(config: dict) -> dict:
+def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
+    '''
+    Parses text configuration data to instantiate UI Text objects.
+
+    Args:
+        config (dict): Nested dictionary containing button configuration.
+        colors (dict): Global RGB color palette mapping.
+        fonts (dict): Pre-loaded pygame.font.Font objects.
+
+    Returns:
+        list: A collection of initialized Button instances.
+    '''
+    texts = []
+    for text_cfg in texts_cfg:
+        texts.append(Text(display_cfg=display_cfg, text_cfg=text_cfg))
+    return texts
+
+
+def fonts_loader(fonts_cfg: dict) -> dict:
     '''
     Resolves filesystem paths and initializes Pygame font assets.
 
@@ -81,41 +89,12 @@ def fonts_loader(config: dict) -> dict:
     fonts_path = root_path / 'assets' / 'fonts' 
 
     fonts = {}
-    for key, data in config.items():
+    for key, data in fonts_cfg.items():
         path = fonts_path / data['file']
         # Convert Path object to string for Pygame compatibility
         fonts[key] = pygame.font.Font(str(path), data['size'])
 
     return fonts
-
-
-def title_loader(config:dict, colors: dict, fonts: dict, 
-                 window: dict) -> Title:
-    '''
-    Initializes the Title UI component with window context for centering logic.
-
-    Args:
-        config (dict): Current screen title configuration.
-        colors (dict): Global RGB color palette mapping.
-        fonts (dict): Pre-loaded pygame.font.Font objects.
-        window (dict): Window dimensions for horizontal alignment calculations.
-
-    Returns:
-        Title: An instance of the Title class ready for rendering.
-    '''
-
-    title_name = config['name']
-    title_size = config['size']
-    title_pos_x = config['position']['x']
-    title_pos_y = config['position']['y']
-    title_font = fonts[config['font']]
-    title_color = colors[config['color']]
-    win_width = window['width']
-    win_height = window['height']
-
-    return Title(name=title_name, size=title_size, pos_x=title_pos_x, 
-                 pos_y=title_pos_y, font=title_font, color=title_color,
-                 win_width=win_width, win_height=win_height)
 
 
 if __name__ == '__main__':

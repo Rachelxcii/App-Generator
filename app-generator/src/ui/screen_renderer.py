@@ -1,7 +1,8 @@
 import pygame
 
-from src.ui.loaders import title_loader, buttons_loader 
 import src.ui.app_functions
+from src.ui.loaders import element_detector
+from src.ui.elements import Button
 
 
 app_functions_registry = {
@@ -9,54 +10,50 @@ app_functions_registry = {
     "save": src.ui.app_functions.save_data,
 }
 
-def screens_loader(window: dict, colors: dict, fonts: dict, config: dict) -> dict:
-
+def screens_loader(display_cfg: dict, screens_cfg: dict) -> dict:
+    '''Create every screen from the screens configuration'''
     screens = dict()
-    for screen_cfg in config.values():
-        screens[screen_cfg['name']] = Screen(window=window, colors=colors, 
-                                            fonts=fonts, config=screen_cfg)
+    for screen_cfg in screens_cfg.values():
+        screens[screen_cfg['ID']] = Screen(display_cfg=display_cfg,
+                                           screen_cfg=screen_cfg)
     return screens
 
 
 class Screen:
 
-    # TO-DO: Aqui llamar a la funcion "element_detector()" en loaders.py
-
-    def __init__(self, window: dict, colors: dict, fonts: dict, config: dict):
-        self.window = window
-        self.colors = colors
-        self.fonts = fonts
+    def __init__(self, display_cfg: dict, screen_cfg: dict):
         
-        self.width = window['width']
-        self.height = window['height']
+        self.display_cfg = display_cfg
+        self.screen_cfg = screen_cfg
+        self.elements_cfg = screen_cfg['elements']
 
-        self.return_button = config['return_button']
-        self.title = title_loader(config=config['title'], colors=colors, 
-                                      fonts=fonts, window=self.window)
-        self.buttons = buttons_loader(config=config['buttons'], colors=colors, 
-                                      fonts=fonts)
+        self.colors = display_cfg['colors']
+        self.fonts = display_cfg['fonts']
+
+        self.elements = element_detector(display_cfg=self.display_cfg,
+                                         elements_cfg=self.elements_cfg)
         
-        self._external_registry = app_functions_registry
+        print(f'ELEMENTS SCREEN: {self.elements}')
 
-    def draw(self, screen):
-        '''All the rendering logic is encapsulated here'''
-        screen.fill(self.colors['background'])
+        self.buttons = [el for el in self.elements if type(el) == Button]
         
-        # Draw title
-        self.title.drawing(screen)
+        for el in self.elements:
+            print(f'--- ELEMENT NAME: {el}')
+            print(f'--- ELEMENT TYPE: {type(el)}')
 
-        if self.return_button['has_return']:
-            if self.return_button['redirection'] == 'None':
-                #TO-DO: draw return button and config redirection.
-                # Un goto hacia el que diga el cofig.
-                pass
-        
-        # Draw buttons
-        for button in self.buttons:
-            button.drawing(screen)
+        print(f'BUTTONS SCREEN: {self.buttons}')
+                
+        self.external_registry = app_functions_registry
 
 
-    def handle_events(self, event):
+    def draw(self, screen) -> None:
+        '''Draw every element of the current screen'''
+        screen.fill(self.colors['background'])        
+        for el in self.elements:
+            el.draw(screen)
+
+
+    def handle_events(self, event) -> None:
         '''Manage events logic on the screen'''
         if event.type == pygame.QUIT:
             return "exit"
@@ -65,16 +62,18 @@ class Screen:
             if button.button_clicked(event):
                 actions = button.get_actions()
                 
-                # Priority 1: Internal function/s
-                if "function" in actions["type"]:
-                    for func_name in actions["call"]:
+                # Priority 1: Internal functions
+                #if "functions" in actions["type"]:
+                if actions["functions"]:
+                    for func_name in actions["functions"]:
                         if func_name == "exit":
                             return "exit"
                         self._execute_internal_function(func_name)
                 
-                # Priority 2: redirection (GOTO)
-                if "goto" in actions["type"]:
-                    return actions["goto"]
+                # Priority 2: redirection
+                #if "redirection" in actions["type"]:
+                if actions["redirection"]:
+                    return actions["redirection"]
                     
         return None
     
@@ -87,7 +86,7 @@ class Screen:
         as an argument, allowing the external function to access and modify 
         the screen's state or data.
         """
-        func = self._external_registry.get(func_name)
+        func = self.external_registry.get(func_name)
         
         if func:
             func(self) 

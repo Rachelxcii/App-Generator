@@ -13,22 +13,21 @@ if not pygame.font.get_init():
     pygame.font.init()
 
 # Load ui configuration
-window_cfg = config['window']
-colors_cfg = config['colors']
-fonts_cfg = fonts_loader(config=config['fonts'])
+display_cfg = config['display']
+display_cfg['fonts'] = fonts_loader(fonts_cfg=config['display']['fonts'])
 screens_cfg = {k: v for k, v in config.items() if k.endswith("_screen")}
 
 # --- NEW CODE ---
 def run_app():
-    # Inicialización única
+
+    # Initialize base display
     pygame.init()
-    screen = pygame.display.set_mode((window_cfg['width'], window_cfg['height']))
-    
-    # Diccionario de estados (Pantallas)
-    screens = screens_loader(window=window_cfg, colors=colors_cfg, 
-                           fonts=fonts_cfg, config=screens_cfg)
-    
-    current_state = 'MAIN-SCREEN'
+    display = pygame.display.set_mode((display_cfg['width'], display_cfg['height']))
+    current_state = display_cfg['init_screen']
+
+    # Dictionary with states (screens)
+    screens = screens_loader(display_cfg=display_cfg, screens_cfg=screens_cfg)
+
     clock = pygame.time.Clock()
 
     while current_state != 'exit':
@@ -41,9 +40,9 @@ def run_app():
                 print(f'FROM: {current_state} - TO: {new_state}')
                 current_state = new_state
 
-        active_screen.draw(screen)
+        active_screen.draw(display)
         pygame.display.flip()
-        clock.tick(window_cfg['fps'])
+        clock.tick(display_cfg['fps'])
 
     pygame.quit()
 
