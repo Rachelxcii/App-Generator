@@ -4,6 +4,11 @@ from pathlib import Path
 from src.ui.elements import Title, Button
 
 
+# TO-DO: crear la funcion "element_detector()" en loaders.py 
+# Esta funcion clasifica el tipo de elemento y lo deriva a su loader
+# Luego el loader especifico llama a la clase del mismo nombre alojada en elements.
+
+
 def buttons_loader(config: dict, colors: dict, fonts: dict) -> list:
     '''
     Parses button configuration data to instantiate UI Button objects.

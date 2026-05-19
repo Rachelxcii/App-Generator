@@ -20,6 +20,8 @@ def screens_loader(window: dict, colors: dict, fonts: dict, config: dict) -> dic
 
 class Screen:
 
+    # TO-DO: Aqui llamar a la funcion "element_detector()" en loaders.py
+
     def __init__(self, window: dict, colors: dict, fonts: dict, config: dict):
         self.window = window
         self.colors = colors
