@@ -6,14 +6,14 @@ from src.ui.elements import Button, Text
 
 def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
     '''
-    Identifies and instantiates UI objects from a configuration dictionary.
+    Identifies and instantiates UI objects from elements configuration.
 
     Args:
-        display_cfg (dict): Global settings for fonts, colors, and asset paths.
-        elements_cfg (dict): Raw dictionary containing the definitions of UI elements.
+        display_cfg (dict): Global display and asset settings.
+        elements_cfg (dict): Raw dict containing the config of UI elements.
 
     Returns:
-        list: A list of initialized UI component objects (Buttons, Images, Texts).
+        list: A list of initialized UI component objects (Buttons, Texts ...).
     '''
 
     categories = {'button': [], 'image': [], 'text': []}
@@ -48,9 +48,8 @@ def buttons_loader(display_cfg: dict, buttons_cfg: dict) -> list:
     Parses button configuration data to instantiate UI Button objects.
 
     Args:
-        config (dict): Nested dictionary containing button configuration.
-        colors (dict): Global RGB color palette mapping.
-        fonts (dict): Pre-loaded pygame.font.Font objects.
+        display_cfg (dict): Global display and asset settings.
+        buttons_cfg (dict): Nested dictionary containing buttons configuration.
 
     Returns:
         list: A collection of initialized Button instances.
@@ -66,12 +65,11 @@ def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
     Parses text configuration data to instantiate UI Text objects.
 
     Args:
-        config (dict): Nested dictionary containing button configuration.
-        colors (dict): Global RGB color palette mapping.
-        fonts (dict): Pre-loaded pygame.font.Font objects.
+        display_cfg (dict): Global display and asset settings.
+        texts_cfg (dict): Nested dictionary containing button configuration.
 
     Returns:
-        list: A collection of initialized Button instances.
+        list: A collection of initialized Text instances.
     '''
     texts = []
     for text_cfg in texts_cfg:
@@ -82,13 +80,15 @@ def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
 def fonts_loader(display_cfg: dict) -> dict:
     '''
     Resolves filesystem paths and initializes Pygame font assets.
+    Configuration dictionary contains the 'fonts' key.
+    The 'fonts' is a mapping of font keys to file names and point sizes.
 
     Args:
-        config (dict): Mapping of font keys to file names and point sizes.
+        display_cfg (dict): Global display and asset settings.
 
     Returns:
         dict: A dictionary where keys match config and values are 
-        pygame.font.Font objects.
+              pygame.font.Font objects.
     '''
     fonts_path = display_cfg['paths']['fonts_dir']
 
