@@ -31,13 +31,23 @@ def screens_loader(display_cfg: dict, screens_cfg: dict) -> dict:
 class Screen:
     '''
     Represents a single app state or menu, managing its own UI elements.
+
+    Attributes:
+        display_cfg (dict): Global display and asset settings.
+        screen_cfg (dict): Specific configuration for this screen instance.
+        elements_cfg (dict): Raw dict containing the config of UI elements.
+        colors (dict): Reference to the global color palette.
+        fonts (dict): Reference to the pre-loaded font objects.
+        elements (list): List of instantiated UI component objects: Buttons...
+        buttons (list): A filtered list containing only the Button objects for 
+                        event handling.
+        external_registry (dict): Mapping of string identifiers to 
+                                  Python functions.
     '''
 
     def __init__(self, display_cfg: dict, screen_cfg: dict):
         '''
         Initializes the screen and its components from configuration.
-
-
         '''
         self.display_cfg = display_cfg
         self.screen_cfg = screen_cfg
@@ -56,6 +66,10 @@ class Screen:
     def draw(self, screen) -> None:
         '''
         Renders the background and all UI elements to the surface.
+
+        Args:
+            screen (pygame.Surface): The main display surface where elements 
+                                     will be drawn.
         '''
         screen.fill(self.colors['background'])        
         for el in self.elements:
@@ -65,6 +79,10 @@ class Screen:
     def handle_events(self, event) -> None:
         '''
         Processes user input and interactions for this specific screen.
+
+        Args:
+            event (pygame.event.Event): The current event from the pygame 
+                                        event queue.
         '''
         if event.type == pygame.QUIT:
             return "exit"
@@ -73,29 +91,29 @@ class Screen:
             if button.button_clicked(event):
                 actions = button.get_actions()
                 
-                # Priority 1: Internal functions
-                #if "functions" in actions["type"]:
                 if actions["functions"]:
                     for func_name in actions["functions"]:
                         if func_name == "exit":
                             return "exit"
-                        self._execute_internal_function(func_name)
+                        self._execute_external_function(func_name)
                 
-                # Priority 2: redirection
-                #if "redirection" in actions["type"]:
                 if actions["redirection"]:
                     return actions["redirection"]
                     
         return None
     
     
-    def _execute_internal_function(self, func_name):
+    def _execute_external_function(self, func_name):
         """
         Retrieves a function from the registry and executes it.
         
         Uses Dependency Injection by passing 'self' (current screen instance) 
         as an argument, allowing the external function to access and modify 
         the screen's state or data.
+
+        Args:
+            func_name (str): The unique identifier of the function within 
+                             the external registry.
         """
         func = self.external_registry.get(func_name)
         
