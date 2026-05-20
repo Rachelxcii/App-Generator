@@ -7,8 +7,8 @@ from src.ui.elements import Button
 
 
 app_functions_registry = {
-    "reset": src.ui.app_functions.reset_maze,
-    "save": src.ui.app_functions.save_data,
+    "reset": src.ui.internal_functions.reset_maze,
+    "save": src.ui.internal_functions.save_data,
 }
 
 
