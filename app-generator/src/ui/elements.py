@@ -81,9 +81,27 @@ class Button:
             self.color_curr = self.color_hover if is_hovering else self.color_base
             pygame.draw.rect(screen, self.color_curr, self.rect, border_radius=8)
             
+            '''text_image = self.font.render(self.text, True, (255, 255, 255))
+            #text_rect = text_image.get_rect(center=self.rect.center)
+            #screen.blit(text_image, text_rect)
+
             text_image = self.font.render(self.text, True, (255, 255, 255))
+            if text_image.get_width() > self.rect.width:
+                # Escalamos el texto para que coincida con el ancho del botón (restando un margen)
+                new_width = self.rect.width - 10 
+                # Calculamos el alto proporcional para no deformar
+                ratio = new_width / text_image.get_width()
+                new_height = int(text_image.get_height() * ratio)
+                
+                text_image = pygame.transform.smoothscale(text_image, (new_width, new_height))
+
             text_rect = text_image.get_rect(center=self.rect.center)
-            screen.blit(text_image, text_rect)
+            screen.blit(text_image, text_rect)'''
+
+            text_surface = self.font.render(self.text, True, (255, 255, 255))
+            width, height = self.rect.width * 0.9, self.rect.height * 0.9
+            text_scaled = pygame.transform.smoothscale(text_surface, (width, height))
+            screen.blit(text_scaled, self.rect)
 
         elif self.subtype == 'image':
             img_to_draw = self.image_hover if is_hovering else self.image_base

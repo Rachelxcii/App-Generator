@@ -22,7 +22,6 @@ paths = {
     'fonts_dir': FONTS_DIR,
 }
 
-
 # Initialize pygame font
 if not pygame.font.get_init():
     pygame.font.init()
@@ -70,12 +69,6 @@ if __name__ == '__main__':
         print('WARNING: NO SCREENS DETECTED')
 
 
-
-# TO-DO: en el config JSON en la parte de los botones crear para cada boton
-# el parametro "action" que dice si es de tipo: goto, function.
-# El tipo goto: redirecciona al user a otra pantalla.
-# El tipo function: tiene una funcion especifica para el tipo de boton.
-
 # TO-DO: en el config JSON crear "elementos generales" donde se guarden:
 # config del return button, config del reset, config del save, config del exit
 
@@ -85,5 +78,3 @@ if __name__ == '__main__':
 # TO-DO: test que verifique que hay una fuente de titulo por cada screen, 
 # con el nombre adecuado, ie: main_screen has title_main_screen, tambien en
 # colors, con verificar que tienen colores asignados cada elemento vale, creo...
-
-# TO-DO: se cargan para todo el colors y el fonts, hacerlo generico?

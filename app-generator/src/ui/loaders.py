@@ -5,6 +5,16 @@ from src.ui.elements import Button, Text
 
 
 def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
+    '''
+    Identifies and instantiates UI objects from a configuration dictionary.
+
+    Args:
+        display_cfg (dict): Global settings for fonts, colors, and asset paths.
+        elements_cfg (dict): Raw dictionary containing the definitions of UI elements.
+
+    Returns:
+        list: A list of initialized UI component objects (Buttons, Images, Texts).
+    '''
 
     categories = {'button': [], 'image': [], 'text': []}
 
@@ -73,9 +83,6 @@ def fonts_loader(display_cfg: dict) -> dict:
     '''
     Resolves filesystem paths and initializes Pygame font assets.
 
-    Uses pathlib for robust cross-platform path resolution, moving from the 
-    current script location to the project root's asset directory.
-
     Args:
         config (dict): Mapping of font keys to file names and point sizes.
 
@@ -83,15 +90,13 @@ def fonts_loader(display_cfg: dict) -> dict:
         dict: A dictionary where keys match config and values are 
         pygame.font.Font objects.
     '''
-    
     fonts_path = display_cfg['paths']['fonts_dir']
 
     fonts = {}
     for key, data in display_cfg['fonts'].items():
         path = fonts_path / data['file']
-        # Convert Path object to string for Pygame compatibility
         fonts[key] = pygame.font.Font(str(path), data['size'])
-
+        
     return fonts
 
 

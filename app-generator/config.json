@@ -23,19 +23,19 @@
         },
         "fonts": {
             "sml_button": {
-                "file": "SupermercadoOne-Regular.ttf",
-                "size": 32
+                "file": "Metamorphous/Metamorphous-Regular.ttf",
+                "size": 50
             },
             "mid_button": {
-                "file": "SupermercadoOne-Regular.ttf",
-                "size": 32
+                "file": "Metamorphous/Metamorphous-Regular.ttf",
+                "size": 50
             },
             "big_button": {
-                "file": "SupermercadoOne-Regular.ttf",
-                "size": 32
+                "file": "Metamorphous/Metamorphous-Regular.ttf",
+                "size": 50
             },
             "title_main_screen": {
-                "file": "SupermercadoOne-Regular.ttf",
+                "file": "Uncial_Antiqua/UncialAntiqua-Regular.ttf",
                 "size": 100
             }
         }

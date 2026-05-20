@@ -11,7 +11,16 @@ app_functions_registry = {
 }
 
 def screens_loader(display_cfg: dict, screens_cfg: dict) -> dict:
-    '''Create every screen from the screens configuration'''
+    '''
+    Initializes all application screens from configuration data.
+
+    Args:
+        display_cfg (dict): Global display and asset settings.
+        screens_cfg (dict): Layout and element definitions for each screen.
+
+    Returns:
+        dict: A dictionary of initialized screen objects indexed by name.
+    '''
     screens = dict()
     for screen_cfg in screens_cfg.values():
         screens[screen_cfg['ID']] = Screen(display_cfg=display_cfg,
@@ -20,9 +29,16 @@ def screens_loader(display_cfg: dict, screens_cfg: dict) -> dict:
 
 
 class Screen:
+    '''
+    Represents a single app state or menu, managing its own UI elements.
+    '''
 
     def __init__(self, display_cfg: dict, screen_cfg: dict):
-        
+        '''
+        Initializes the screen and its components from configuration.
+
+
+        '''
         self.display_cfg = display_cfg
         self.screen_cfg = screen_cfg
         self.elements_cfg = screen_cfg['elements']
@@ -33,28 +49,23 @@ class Screen:
         self.elements = element_detector(display_cfg=self.display_cfg,
                                          elements_cfg=self.elements_cfg)
         
-        print(f'ELEMENTS SCREEN: {self.elements}')
-
         self.buttons = [el for el in self.elements if type(el) == Button]
-        
-        for el in self.elements:
-            print(f'--- ELEMENT NAME: {el}')
-            print(f'--- ELEMENT TYPE: {type(el)}')
-
-        print(f'BUTTONS SCREEN: {self.buttons}')
-                
         self.external_registry = app_functions_registry
 
 
     def draw(self, screen) -> None:
-        '''Draw every element of the current screen'''
+        '''
+        Renders the background and all UI elements to the surface.
+        '''
         screen.fill(self.colors['background'])        
         for el in self.elements:
             el.draw(screen)
 
 
     def handle_events(self, event) -> None:
-        '''Manage events logic on the screen'''
+        '''
+        Processes user input and interactions for this specific screen.
+        '''
         if event.type == pygame.QUIT:
             return "exit"
         
