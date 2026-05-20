@@ -7,10 +7,27 @@ def get_base_path():
     frozen executable (e.g., .exe or .app).
     '''
     if getattr(sys, 'frozen', False):
-        # When running as a bundled executable, PyInstaller extracts data 
-        # to a temporary folder stored in sys._MEIPASS
         return Path(sys._MEIPASS)
     else:
-        # When running from source, calculate the root directory by 
-        # resolving the current file path and navigating up the parent tree
         return Path(__file__).resolve().parent.parent.parent.parent
+    
+
+class AppPaths:
+    """
+    Manages the application's filesystem structure and asset resolution.
+    """
+    def __init__(self, root_name: str = "App-Generator"):
+        self.base_dir = get_base_path()
+        self.assets_dir = self.base_dir / root_name / "assets"
+        self.images = self.assets_dir / "images"
+        self.fonts = self.assets_dir / "fonts"
+        self.config = self.base_dir / root_name / "config"
+
+    def to_dict(self) -> dict:
+        """Returns a dictionary mapping for legacy compatibility."""
+        return {
+            'base': self.base_dir,
+            'assets': self.assets_dir,
+            'images': self.images,
+            'fonts': self.fonts
+        }

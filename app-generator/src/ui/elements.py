@@ -46,7 +46,7 @@ class Button:
             self.color_curr = colors[button_cfg['color']['base']]
             
         elif self.subtype == 'image':
-            images_path = display_cfg['paths']['images_dir']
+            images_path = display_cfg['paths']['images']
             base_path = images_path / button_cfg['image']['base']
             hover_path = images_path / button_cfg['image']['hover']
             self.image_base = pygame.image.load(base_path).convert_alpha()

@@ -89,7 +89,7 @@ def fonts_loader(display_cfg: dict) -> dict:
         dict: A dictionary where keys match config and values are 
               pygame.font.Font objects.
     '''
-    fonts_path = display_cfg['paths']['fonts_dir']
+    fonts_path = display_cfg['paths']['fonts']
 
     fonts = {}
     for key, data in display_cfg['fonts'].items():

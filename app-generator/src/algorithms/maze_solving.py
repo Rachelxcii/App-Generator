@@ -1,1 +1,0 @@
-# Solving maze algorithms: DFS, BFS, A*, Minimax

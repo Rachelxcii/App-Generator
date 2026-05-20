@@ -1,6 +1,7 @@
 import pygame
 
-import src.ui.app_functions
+import src.ui.external_functions
+import src.ui.internal_functions
 from src.ui.loaders import element_detector
 from src.ui.elements import Button
 
@@ -9,6 +10,7 @@ app_functions_registry = {
     "reset": src.ui.app_functions.reset_maze,
     "save": src.ui.app_functions.save_data,
 }
+
 
 def screens_loader(display_cfg: dict, screens_cfg: dict) -> dict:
     '''

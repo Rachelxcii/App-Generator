@@ -3,26 +3,25 @@ import pygame
 from src.utils.config_loader import get_config
 from src.ui.loaders import fonts_loader
 from src.ui.screen_renderer import screens_loader
-from src.utils.path_loader import get_base_path
+from src.utils.path_loader import AppPaths
 
 
-# Load configuration
+# --- TO-DO LIST ---
+# TO-DO: pre-sets functions like: save CSV, reset, exit, etc. (internal_functions.py)
+# TO-DO: move "app_functions_registry" from screen_renderer.py to internal_functions.py ('in')
+# TO-DO: move "app_functions_registry" from screen_renderer.py to external_functions.py ('ex')
+# TO-DO: unify "app_functions_registry" from 'in' and 'ex' in screen_renderer.py
+# TO-DO: tests to check the entire config JSON
+
+
+# --- Global Initialization and Asset Mapping ---
+# Load global application settings from JSON
 config = get_config()
 
-# Load path app #TO-DO improve the path logic
-BASE_DIR = get_base_path()
-ASSETS_DIR = BASE_DIR / "App-Generator" / "assets"
-IMAGES_DIR = ASSETS_DIR / "images"
-FONTS_DIR = ASSETS_DIR / "fonts"
+# Load path registry for internal reference
+paths = AppPaths().to_dict()
 
-paths = {
-    'BASE_DIR': get_base_path(),
-    'ASSETS_DIR': ASSETS_DIR,
-    'images_dir': IMAGES_DIR,
-    'fonts_dir': FONTS_DIR,
-}
-
-# Initialize pygame font
+# Ensure the Pygame font module is ready for asset loading
 if not pygame.font.get_init():
     pygame.font.init()
 
@@ -32,27 +31,43 @@ display_cfg['paths'] = paths
 display_cfg['fonts'] = fonts_loader(display_cfg=config['display'])
 screens_cfg = {k: v for k, v in config.items() if k.endswith("_screen")}
 
-# --- NEW CODE ---
+
 def run_app():
+    '''
+    Main execution loop. Initializes the display and manages state transitions 
+    between different application screens.
+
+    Logic:
+        1. Initializes the Pygame display surface and clock.
+        2. Loads all screen objects based on the configuration.
+        3. Enters the main loop: 
+           - Handles events through the active screen.
+           - Updates current_state if a transition (redirection) is triggered.
+           - Renders the active screen at the defined FPS.
+    '''
 
     # Initialize base display
     pygame.init()
-    display = pygame.display.set_mode((display_cfg['width'], display_cfg['height']))
+    display = pygame.display.set_mode((display_cfg['width'], 
+                                       display_cfg['height']))
+
+    # Set the starting point for the state machine
     current_state = display_cfg['init_screen']
 
-    # Dictionary with states (screens)
+    # Dictionary containing instantiated screen objects mapped by their ID
     screens = screens_loader(display_cfg=display_cfg, screens_cfg=screens_cfg)
 
+    # Frame rate controller
     clock = pygame.time.Clock()
 
+    # --- MAIN APPLICATION LOOP ---
     while current_state != 'exit':
+
         active_screen = screens[current_state]
         
         for event in pygame.event.get():
-            # TO-DO: La pantalla decide qué estado sigue
             new_state = active_screen.handle_events(event)
             if new_state:
-                print(f'FROM: {current_state} - TO: {new_state}')
                 current_state = new_state
 
         active_screen.draw(display)
@@ -67,14 +82,3 @@ if __name__ == '__main__':
         run_app()
     else:
         print('WARNING: NO SCREENS DETECTED')
-
-
-# TO-DO: en el config JSON crear "elementos generales" donde se guarden:
-# config del return button, config del reset, config del save, config del exit
-
-# TO-DO: revisar ocmo usar el arial en fonts, crear un param que se llame 
-# "fuente personalizada" y que sea un bool.
-
-# TO-DO: test que verifique que hay una fuente de titulo por cada screen, 
-# con el nombre adecuado, ie: main_screen has title_main_screen, tambien en
-# colors, con verificar que tienen colores asignados cada elemento vale, creo...
