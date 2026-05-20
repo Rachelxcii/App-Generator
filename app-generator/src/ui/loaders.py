@@ -1,5 +1,4 @@
 import pygame
-from pathlib import Path
 
 from src.ui.elements import Button, Text
 
