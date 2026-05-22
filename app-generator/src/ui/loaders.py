@@ -1,6 +1,6 @@
 import pygame
 
-from src.ui.elements import Button, Text
+from src.ui.elements import Button, Image, Text
 
 
 def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
@@ -32,7 +32,7 @@ def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
         output += buttons
         
     if images_cfg:
-        images = []
+        images = images_loader(display_cfg=display_cfg, images_cfg=images_cfg)
         output += images
     
     if texts_cfg:
@@ -59,13 +59,30 @@ def buttons_loader(display_cfg: dict, buttons_cfg: dict) -> list:
     return buttons
 
 
+def images_loader(display_cfg: dict, images_cfg: dict) -> list:
+    '''
+    Parses image configuration data to instantiate UI Image objects.
+
+    Args:
+        display_cfg (dict): Global display and asset settings.
+        images_cfg (dict): Nested dictionary containing images configuration.
+
+    Returns:
+        list: A collection of initialized Text instances.
+    '''
+    images = []
+    for image_cfg in images_cfg:
+        images.append(Image(display_cfg=display_cfg, image_cfg=image_cfg))
+    return images
+
+
 def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
     '''
     Parses text configuration data to instantiate UI Text objects.
 
     Args:
         display_cfg (dict): Global display and asset settings.
-        texts_cfg (dict): Nested dictionary containing button configuration.
+        texts_cfg (dict): Nested dictionary containing texts configuration.
 
     Returns:
         list: A collection of initialized Text instances.

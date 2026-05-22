@@ -105,9 +105,15 @@ class Button:
 
         elif self.subtype == 'image':
             img_to_draw = self.image_hover if is_hovering else self.image_base
-            
-            img_rect = img_to_draw.get_rect(center=self.rect.center)
-            screen.blit(img_to_draw, img_rect)
+
+            # TO-DO: Keep raw image size
+            # img_rect = img_to_draw.get_rect(center=self.rect.center)
+            # screen.blit(img_to_draw, img_rect)
+
+            # Scale the image to fit the rect
+            # TO-DO: Adjust the image to fit the rect, when image is bigger than rect
+            img_scaled = pygame.transform.smoothscale(img_to_draw, (self.rect.width, self.rect.height))
+            screen.blit(img_scaled, self.rect)
 
     
     def get_actions(self) -> dict:
@@ -140,6 +146,49 @@ class Button:
             if self.rect.collidepoint(event.pos):
                 return True
         return False
+    
+
+class Image:
+    '''
+    A class to represent and render a static image in Pygame.
+
+    Attributes:
+        image (pygame.Surface): The optimized image surface.
+        rect (pygame.Rect): The rectangular area of the image for positioning.
+    '''
+
+    def __init__(self, display_cfg: dict, image_cfg: dict):
+        '''
+        Initializes the Image object by loading and optimizing the file.
+
+        Args:
+            display_cfg (dict): Global config containing asset paths.
+            image_cfg (dict): Specific config with filename and coordinates.
+        '''
+        path_dir = display_cfg['paths']['images']
+        self.path_image = path_dir / image_cfg['file']
+        self.size = image_cfg.get('size', '')
+        x = image_cfg['position']['x']
+        y = image_cfg['position']['y']
+        self.width = self.size['width']
+        self.height = self.size['height']
+
+        self.rect = pygame.Rect(x, y, self.width, self.height)
+
+
+    def draw(self, screen: pygame.Surface) -> None:
+        '''Loads and renders the image to the destination surface.
+        
+        Args:
+            screen (pygame.Surface): Surface where text will be blitted.
+
+        Returns:
+            None
+        '''
+        raw_image = pygame.image.load(str(self.path_image)).convert_alpha()
+        image = pygame.transform.smoothscale(raw_image, (self.width, 
+                                                         self.height))
+        screen.blit(image, self.rect)
 
 
 class Text:
@@ -167,12 +216,22 @@ class Text:
                                  position, font key and color key.
             '''
             self.text = text_cfg['text']
-            self.pos_x = text_cfg['position']['x']
-            self.pos_y = text_cfg['position']['y']
+            self.x = text_cfg['position']['x']
+            self.y = text_cfg['position']['y']
             self.font = display_cfg['fonts'][text_cfg['font']]
             self.color = display_cfg['colors'][text_cfg['color']]
+            
+            self.size = display_cfg.get('size', "")
 
-        def draw(self, screen) -> None:
+            print(f'SIZE: {self.size}')
+
+            if self.size:
+                width = display_cfg['size']['width']
+                height = display_cfg['size']['height']
+                self.rect = pygame.Rect(self.x, self.y, width, height)
+
+
+        def draw(self, screen: pygame.Surface) -> None:
             '''
             Renders the text to a surface and draws it at the specified 
             coordinates.
@@ -183,7 +242,27 @@ class Text:
             Returns:
                 None
             '''
-            text_format = self.font.render(self.text, True, self.color)
-            screen.blit(text_format, (self.pos_x, self.pos_y))
+            if self.size:
 
+                print(f'--- {self.text} HAS SIZE ---')
+
+                text_surface = self.font.render(self.text, True, self.color)
+
+                ratio_w = (self.rect.width * 0.9) / text_surface.get_width()
+                ratio_h = (self.rect.height * 0.9) / text_surface.get_height()
+                scale_factor = min(ratio_w, ratio_h)
+                width = int(text_surface.get_width() * scale_factor)
+                height = int(text_surface.get_height() * scale_factor)
+                new_size = (width,height)
+
+                size = (int(text_surface.get_width()), int(text_surface.get_height()))
+                text_scaled = pygame.transform.smoothscale(text_surface, size)
+
+                text_rect = text_scaled.get_rect(center=self.rect.center)
+                screen.blit(text_scaled, text_rect)
+
+            else:
+                #print(f'--- {self.text} HAS NO SIZE ---')
+                text_format = self.font.render(self.text, True, self.color)
+                screen.blit(text_format, (self.x, self.y))
     

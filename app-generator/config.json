@@ -19,16 +19,16 @@
             "button_base": [67, 64, 57],
             "button_hover": [72, 72, 74],
             "plain_txt": [228, 215, 183],
-            "title_main_screen": [228, 215, 183]
+            "title_txt": [228, 215, 183]
         },
         "fonts": {
             "sml_button": {
                 "file": "Metamorphous/Metamorphous-Regular.ttf",
-                "size": 50
+                "size": 30
             },
             "mid_button": {
                 "file": "Metamorphous/Metamorphous-Regular.ttf",
-                "size": 50
+                "size": 40
             },
             "big_button": {
                 "file": "Metamorphous/Metamorphous-Regular.ttf",
@@ -36,7 +36,11 @@
             },
             "title_main_screen": {
                 "file": "Uncial_Antiqua/UncialAntiqua-Regular.ttf",
-                "size": 100
+                "size": 65
+            },
+            "title_secondary_screen": {
+                "file": "Uncial_Antiqua/UncialAntiqua-Regular.ttf",
+                "size": 65
             }
         }
     },
@@ -44,32 +48,51 @@
     "main_screen": {
         "ID": "MAIN-SCREEN",
         "elements": {
+            "screen_title": {
+                "type": "text",
+                "text": "APP GENERATOR",
+                "position": {"x": 30, "y": 50},
+                "font": "title_main_screen",
+                "color": "title_txt"
+            },
             "secondary_button": {
                 "type": "button",
                 "subtype": "text",
-                "position" : {"x": 0, "y": 0},
+                "position" : {"x": 50, "y": 250},
                 "size": {"width": 150, "height": 150},
-                "text": "SECONDARY",
+                "text": "SEC.",
                 "font": "sml_button",
                 "color": {"base": "button_base", "hover": "button_hover"},
                 "redirection": "SECONDARY-SCREEN",
                 "functions": [""]
             },
-            "screen_title": {
-                "type": "text",
-                "text": "APP GENERATOR",
-                "position": {"x": 100, "y": 50},
-                "font": "title_main_screen",
-                "color": "title_main_screen"
-            },
-            "return_button": {
+            "useless_button": {
                 "type": "button",
-                "subtype": "image",
-                "position" : {"x": 0, "y": 100},
+                "subtype": "text",
+                "position" : {"x": 275, "y": 250},
                 "size": {"width": 150, "height": 150},
-                "image": {"base": "arrow_back.png", "hover": "arrow_back.png"},
-                "redirection": "SECONDARY-SCREEN",
+                "text": "USELESS",
+                "font": "sml_button",
+                "color": {"base": "button_base", "hover": "button_hover"},
+                "redirection": "",
                 "functions": [""]
+            },
+            "exit_button": {
+                "type": "button",
+                "subtype": "text",
+                "position" : {"x": 500, "y": 250},
+                "size": {"width": 150, "height": 150},
+                "text": "EXIT",
+                "font": "sml_button",
+                "color": {"base": "button_base", "hover": "button_hover"},
+                "redirection": "",
+                "functions": ["exit"]
+            },
+            "logo_image":{
+                "type": "image",
+                "file": "rachelxcii_logo.png",
+                "position" : {"x": 325, "y": 425},
+                "size": {"width": 50, "height": 50}
             }
         }
     },
@@ -77,17 +100,12 @@
     "generator_screen": {
         "ID": "SECONDARY-SCREEN",
         "elements": {
-            "to_main_button": {
+            "return_button": {
                 "type": "button",
-                "subtype": "text",
-                "position" : {"x": 0, "y": 0},
-                "size": {"width": 150, "height": 150},
-                "text": "MAIN",
-                "font": "sml_button",
-                "color": {"base": "button_base","hover": "button_hover"},
-                "image": "",
-                "has_redirection": true,
-                "has_function": false,
+                "subtype": "image",
+                "position" : {"x": 50, "y": 50},
+                "size": {"width": 50, "height": 100},
+                "image": {"base": "arrow_back.png", "hover": "arrow_back.png"},
                 "redirection": "MAIN-SCREEN",
                 "functions": [""]
             },
@@ -95,8 +113,15 @@
                 "type": "text",
                 "text": "SECONDARY",
                 "position": {"x": 100, "y": 50},
-                "font": "title_main_screen",
-                "color": "title_main_screen"
+                "size": {"width": 50, "height": 100},
+                "font": "title_secondary_screen",
+                "color": "title_txt"
+            },
+            "logo_image":{
+                "type": "image",
+                "file": "rachelxcii_logo.png",
+                "position" : {"x": 325, "y": 425},
+                "size": {"width": 50, "height": 50}
             }
         }
     }

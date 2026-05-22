@@ -118,6 +118,8 @@ class Screen:
                              the external registry.
         """
         func = self.external_registry.get(func_name)
+
+        print(f'{self.screen_cfg["ID"]}')
         
         if func:
             func(self) 
