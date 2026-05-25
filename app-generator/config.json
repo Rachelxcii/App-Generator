@@ -19,7 +19,8 @@
             "button_base": [67, 64, 57],
             "button_hover": [72, 72, 74],
             "plain_txt": [228, 215, 183],
-            "title_txt": [228, 215, 183]
+            "title_txt": [228, 215, 183],
+            "tint_color": [255, 0, 0]
         },
         "fonts": {
             "sml_button": {
@@ -121,7 +122,8 @@
                 "type": "image",
                 "file": "rachelxcii_logo.png",
                 "position" : {"x": 325, "y": 425},
-                "size": {"width": 50, "height": 50}
+                "size": {"width": 50, "height": 50},
+                "tint_color": "tint_color"
             }
         }
     }

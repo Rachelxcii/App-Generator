@@ -31,13 +31,22 @@ class Button:
                                and functional data for this button.
         '''
         self.subtype = button_cfg['subtype']
+        self._subtype_attr_loader(display_cfg=display_cfg, button_cfg=button_cfg)
+
         x = button_cfg['position']['x']
         y = button_cfg['position']['y']
         width = button_cfg['size']['width']
         height = button_cfg['size']['height']
+
+        self.rect = pygame.Rect(x, y, width, height)
+        self.redirection = button_cfg['redirection']
+        self.functions = button_cfg['functions']
+
+
+    def _subtype_attr_loader(self, display_cfg: dict, button_cfg: dict):
         fonts = display_cfg['fonts']
         colors = display_cfg['colors']
-
+        
         if self.subtype == 'text':
             self.text = button_cfg['text']
             self.font = fonts[button_cfg['font']]
@@ -51,13 +60,12 @@ class Button:
             hover_path = images_path / button_cfg['image']['hover']
             self.image_base = pygame.image.load(base_path).convert_alpha()
             self.image_hover = pygame.image.load(hover_path).convert_alpha()
-                    
-        self.rect = pygame.Rect(x, y, width, height)
-        self.redirection = button_cfg['redirection']
-        self.functions = button_cfg['functions']
 
 
-    def _type_detector(): #TO-DO: type detector, to classify in text or image
+    def tint_image(self, rgb_color: tuple):
+        '''
+        Applies a color tint to the image while preserving transparency.
+        '''
         pass
 
 
@@ -148,12 +156,16 @@ class Button:
         return False
     
 
-class Image:
+class Image:  # TO-DO: duda sobre draw, este method se ejecutara cada refresco de la screen o solo una vez???
     '''
     A class to represent and render a static image in Pygame.
 
     Attributes:
+        path_image:
         image (pygame.Surface): The optimized image surface.
+        size:
+        width:
+        height:
         rect (pygame.Rect): The rectangular area of the image for positioning.
     '''
 
@@ -175,6 +187,31 @@ class Image:
 
         self.rect = pygame.Rect(x, y, self.width, self.height)
 
+        self.raw_img = pygame.image.load(str(self.path_image)).convert_alpha()
+        self.raw_img = pygame.transform.smoothscale(self.raw_img, 
+                                                    (self.width, self.height))
+        
+        self.curr_img = self.raw_img.copy()
+        tint_color = image_cfg.get('tint_color')
+
+        if tint_color:
+            target_rgb = display_cfg['colors'].get(tint_color, (255, 255, 255))
+            self.tint_image(target_rgb)
+
+
+    def tint_image(self, rgb_color: tuple):
+        '''
+        Applies a color tint to the image while preserving transparency.
+        '''
+        tint_surf = pygame.Surface((self.width, self.height)).convert_alpha()
+        tint_surf.fill(rgb_color)
+        
+        self.curr_img = self.raw_img.copy()
+        
+        # BLEND_RGBA_MULT multiply the colors
+        self.curr_img.blit(tint_surf, (0, 0),
+                           special_flags=pygame.BLEND_RGBA_MULT)
+
 
     def draw(self, screen: pygame.Surface) -> None:
         '''Loads and renders the image to the destination surface.
@@ -185,10 +222,7 @@ class Image:
         Returns:
             None
         '''
-        raw_image = pygame.image.load(str(self.path_image)).convert_alpha()
-        image = pygame.transform.smoothscale(raw_image, (self.width, 
-                                                         self.height))
-        screen.blit(image, self.rect)
+        screen.blit(self.curr_img, self.rect)
 
 
 class Text:
@@ -265,4 +299,70 @@ class Text:
                 #print(f'--- {self.text} HAS NO SIZE ---')
                 text_format = self.font.render(self.text, True, self.color)
                 screen.blit(text_format, (self.x, self.y))
+
+
+class TextInput:
+    '''
+    Managed UI element for text entry, handling focus, keyboard input, and 
+    rendering.
+    
+    Attributes:
+        text (str): The current string entered by the user.
+        active (bool): Whether the element is focused and capturing keystrokes.
+        rect (pygame.Rect): The collision and drawing area.
+        color_active (tuple): Border color when focused.
+        color_passive (tuple): Border color when idle.
+    '''
+
+    def __init__(self, display_cfg: dict, text_input_cfg: dict):
+        '''
+        Initializes the Input field with styling and positioning.
+        '''
+        self.rect = pygame.Rect(text_input_cfg['position']['x'], 
+                                text_input_cfg['position']['y'], 
+                                text_input_cfg['size']['width'], 
+                                text_input_cfg['size']['height'])
+        
+        self.colors = display_cfg['colors']
+        self.font = display_cfg['fonts'][text_input_cfg.get('font', 'default')]
+        
+        self.text = ""
+        self.active = False
+        
+        self.color_active = self.colors.get(text_input_cfg.get('color_active'), 
+                                            (255, 255, 255))
+        self.color_passive = self.colors.get(text_input_cfg.get('color_passive'), 
+                                             (100, 100, 100))
+        self.color_curr = self.color_passive
+
+    def handle_events(self, event: pygame.event.Event) -> None:
+        '''
+        Manages focus toggling and keyboard capture.
+        '''
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # Toggle focus if user clicks the box
+            self.active = self.rect.collidepoint(event.pos)
+            self.color_curr = self.color_active if self.active else self.color_passive
+
+        if self.active and event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            elif event.key == pygame.K_RETURN:
+                self.active = False  # Finish input
+                self.color_curr = self.color_passive
+            else:
+                # Limit text length to avoid overflow (optional logic)
+                if len(self.text) < 20: 
+                    self.text += event.unicode
+
+    def draw(self, screen: pygame.Surface) -> None:
+        '''Renders the input box and the current text.'''
+        # 1. Draw the background/border
+        pygame.draw.rect(screen, self.color_curr, self.rect, 2)
+        
+        # 2. Render the text
+        text_surface = self.font.render(self.text, True, self.colors.get('text', (255, 255, 255)))
+        
+        # 3. Blit with a small padding
+        screen.blit(text_surface, (self.rect.x + 5, self.rect.y + (self.rect.height // 4)))
     
