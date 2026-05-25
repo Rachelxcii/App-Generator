@@ -273,15 +273,39 @@ class Text:
             self.font = display_cfg['fonts'][text_cfg['font']]
             self.color = display_cfg['colors'][text_cfg['color']]
             
-            self.size = display_cfg.get('size', "")
+            self.size_cfg = display_cfg.get('size', '')
+            self._prepare_surface()
+        
+        def _prepare_surface(self):
+            '''
+            Generates final text surface
+            '''
+            raw_surface = self.font.render(self.text, True, self.color)
 
-            print(f'SIZE: {self.size}')
+            if self.size_cfg:
+                print(f'TEXT: {self.text} - HAS SIZE CONFIG')
 
-            if self.size:
-                width = display_cfg['size']['width']
-                height = display_cfg['size']['height']
+                width = self.size_cfg['width']
+                height = self.size_cfg['height']
                 self.rect = pygame.Rect(self.x, self.y, width, height)
+                center = self.rect.center
 
+                ratio_w = (self.rect.width * 0.9) / raw_surface.get_width()
+                ratio_h = (self.rect.height * 0.9) / raw_surface.get_height()
+                scale_factor = min(ratio_w, ratio_h)
+
+                width = int(raw_surface.get_width() * scale_factor)
+                height = int(raw_surface.get_height() * scale_factor)
+                size = (width, height)
+
+                self.surface = pygame.transform.smoothscale(raw_surface, size)
+                self.draw_pos = self.surface.get_rect(center=center)
+
+            else:
+                print(f'TEXT: {self.text} - HAS NOT SIZE CONFIG')
+                self.surface = raw_surface
+                self.draw_pos = (self.x, self.y)
+            
 
         def draw(self, screen: pygame.Surface) -> None:
             '''
@@ -294,29 +318,7 @@ class Text:
             Returns:
                 None
             '''
-            if self.size:
-
-                print(f'--- {self.text} HAS SIZE ---')
-
-                text_surface = self.font.render(self.text, True, self.color)
-
-                ratio_w = (self.rect.width * 0.9) / text_surface.get_width()
-                ratio_h = (self.rect.height * 0.9) / text_surface.get_height()
-                scale_factor = min(ratio_w, ratio_h)
-                width = int(text_surface.get_width() * scale_factor)
-                height = int(text_surface.get_height() * scale_factor)
-                new_size = (width,height)
-
-                size = (int(text_surface.get_width()), int(text_surface.get_height()))
-                text_scaled = pygame.transform.smoothscale(text_surface, size)
-
-                text_rect = text_scaled.get_rect(center=self.rect.center)
-                screen.blit(text_scaled, text_rect)
-
-            else:
-                #print(f'--- {self.text} HAS NO SIZE ---')
-                text_format = self.font.render(self.text, True, self.color)
-                screen.blit(text_format, (self.x, self.y))
+            screen.blit(self.surface, self.draw_pos)
 
 
 class TextInput:
