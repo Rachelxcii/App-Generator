@@ -91,7 +91,7 @@
             },
             "logo_image":{
                 "type": "image",
-                "file": "rachelxcii_logo.png",
+                "file": "rachelxcii_logo_transparent.PNG",
                 "position" : {"x": 325, "y": 425},
                 "size": {"width": 50, "height": 50}
             }
@@ -108,7 +108,8 @@
                 "size": {"width": 50, "height": 100},
                 "image": {"base": "arrow_back.png", "hover": "arrow_back.png"},
                 "redirection": "MAIN-SCREEN",
-                "functions": [""]
+                "functions": [""],
+                "tint_color": {"base": "", "hover": "tint_color"}
             },
             "screen_title": {
                 "type": "text",
@@ -120,7 +121,7 @@
             },
             "logo_image":{
                 "type": "image",
-                "file": "rachelxcii_logo.png",
+                "file": "rachelxcii_logo_transparent.PNG",
                 "position" : {"x": 325, "y": 425},
                 "size": {"width": 50, "height": 50},
                 "tint_color": "tint_color"

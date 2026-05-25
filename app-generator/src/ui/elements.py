@@ -31,16 +31,17 @@ class Button:
                                and functional data for this button.
         '''
         self.subtype = button_cfg['subtype']
-        self._subtype_attr_loader(display_cfg=display_cfg, button_cfg=button_cfg)
 
         x = button_cfg['position']['x']
         y = button_cfg['position']['y']
-        width = button_cfg['size']['width']
-        height = button_cfg['size']['height']
+        self.width = button_cfg['size']['width']
+        self.height = button_cfg['size']['height']
 
-        self.rect = pygame.Rect(x, y, width, height)
         self.redirection = button_cfg['redirection']
         self.functions = button_cfg['functions']
+
+        self.rect = pygame.Rect(x, y, self.width, self.height)
+        self._subtype_attr_loader(display_cfg=display_cfg, button_cfg=button_cfg)
 
 
     def _subtype_attr_loader(self, display_cfg: dict, button_cfg: dict):
@@ -53,22 +54,73 @@ class Button:
             self.color_base = colors[button_cfg['color']['base']]
             self.color_hover = colors[button_cfg['color']['hover']]
             self.color_curr = colors[button_cfg['color']['base']]
+            self._transform_text()
             
         elif self.subtype == 'image':
             images_path = display_cfg['paths']['images']
             base_path = images_path / button_cfg['image']['base']
             hover_path = images_path / button_cfg['image']['hover']
-            self.image_base = pygame.image.load(base_path).convert_alpha()
-            self.image_hover = pygame.image.load(hover_path).convert_alpha()
+
+            raw_img_base = pygame.image.load(base_path).convert_alpha()
+            raw_img_hover = pygame.image.load(hover_path).convert_alpha()
+
+            self.img_base = pygame.transform.smoothscale(raw_img_base, 
+                                                        self.rect.size)
+            self.img_hover = pygame.transform.smoothscale(raw_img_hover, 
+                                                          self.rect.size)
+
+            self._apply_tints(display_cfg=display_cfg, button_cfg=button_cfg)
 
 
-    def tint_image(self, rgb_color: tuple):
+    def _transform_text(self):
+        raw_text = self.font.render(self.text, True, (255, 255, 255))
+    
+        if raw_text.get_width() > self.rect.width:
+            new_width = self.rect.width - 10 
+            ratio = new_width / raw_text.get_width()
+            new_height = int(raw_text.get_height() * ratio)
+            self.text_surface = pygame.transform.smoothscale(raw_text, 
+                                                                (new_width, 
+                                                                new_height))
+        else:
+            self.text_surface = raw_text
+
+        self.text_rect = self.text_surface.get_rect(center=self.rect.center)
+
+
+    def _apply_tints(self, display_cfg: dict, button_cfg: dict):
         '''
         Applies a color tint to the image while preserving transparency.
         '''
-        pass
+        tint_cfg = button_cfg.get("tint_color")
+        
+        if tint_cfg.get('base'):
+            print(f'TINT BASE: {tint_cfg["base"]}')
+            color = display_cfg['colors'].get(tint_cfg['base'])
+            self.img_base = self._execute_tint(surface=self.img_base, 
+                                               color=color)
+
+        if tint_cfg.get('hover'):
+            print(f'TINT HOVER: {tint_cfg["hover"]}')
+            color = display_cfg['colors'].get(tint_cfg['hover'])
+            self.img_hover = self._execute_tint(surface=self.img_hover,
+                                               color=color)
 
 
+    def _execute_tint(self, surface: pygame.Surface, color: tuple) -> pygame.Surface:
+        '''
+        Helper to multiply a surface by a color.
+        '''
+        tint_surf = pygame.Surface((self.width, self.height)).convert_alpha()
+        tint_surf.fill(color)
+        
+        result_img = surface.copy()
+        flags = pygame.BLEND_RGBA_MULT
+        result_img.blit(tint_surf, (0, 0), special_flags=flags)
+
+        return result_img
+            
+        
     def draw(self, screen: pygame.Surface) -> None:
         '''
         Handles the rendering of the button and the hover logic.
@@ -79,49 +131,17 @@ class Button:
         Returns:
             None
         '''
-
         pos_mouse = pygame.mouse.get_pos()
         is_hovering = self.rect.collidepoint(pos_mouse)
 
         if self.subtype == 'text':
             self.color_curr = self.color_hover if is_hovering else self.color_base
             pygame.draw.rect(screen, self.color_curr, self.rect, border_radius=8)
-            
-            if self.subtype == 'text': #TO-DO: bool "to_adjust"
-                text_image = self.font.render(self.text, True, (255, 255, 255))
-
-                if text_image.get_width() > self.rect.width:
-                    new_width = self.rect.width - 10 
-                    ratio = new_width / text_image.get_width()
-                    new_height = int(text_image.get_height() * ratio)
-                    
-                    text_image = pygame.transform.smoothscale(text_image, (new_width, new_height))
-
-                text_rect = text_image.get_rect(center=self.rect.center)
-                screen.blit(text_image, text_rect)
-
-            else:
-                text_surface = self.font.render(self.text, True, (255, 255, 255))
-                width = int(self.rect.width * 0.9)
-                height = int(self.rect.height * 0.9)
-                text_scaled = pygame.transform.smoothscale(text_surface,
-                                                        (width, height))
-
-                text_rect = text_scaled.get_rect(center=self.rect.center)
-                screen.blit(text_scaled, text_rect)
-
+            screen.blit(self.text_surface, self.text_rect)
 
         elif self.subtype == 'image':
-            img_to_draw = self.image_hover if is_hovering else self.image_base
-
-            # TO-DO: Keep raw image size
-            # img_rect = img_to_draw.get_rect(center=self.rect.center)
-            # screen.blit(img_to_draw, img_rect)
-
-            # Scale the image to fit the rect
-            # TO-DO: Adjust the image to fit the rect, when image is bigger than rect
-            img_scaled = pygame.transform.smoothscale(img_to_draw, (self.rect.width, self.rect.height))
-            screen.blit(img_scaled, self.rect)
+            img = self.img_hover if is_hovering else self.img_base
+            screen.blit(img, self.rect)
 
     
     def get_actions(self) -> dict:
@@ -196,10 +216,10 @@ class Image:  # TO-DO: duda sobre draw, este method se ejecutara cada refresco d
 
         if tint_color:
             target_rgb = display_cfg['colors'].get(tint_color, (255, 255, 255))
-            self.tint_image(target_rgb)
+            self._tint_image(target_rgb)
 
 
-    def tint_image(self, rgb_color: tuple):
+    def _tint_image(self, rgb_color: tuple):
         '''
         Applies a color tint to the image while preserving transparency.
         '''
@@ -207,10 +227,8 @@ class Image:  # TO-DO: duda sobre draw, este method se ejecutara cada refresco d
         tint_surf.fill(rgb_color)
         
         self.curr_img = self.raw_img.copy()
-        
-        # BLEND_RGBA_MULT multiply the colors
-        self.curr_img.blit(tint_surf, (0, 0),
-                           special_flags=pygame.BLEND_RGBA_MULT)
+        flags = pygame.BLEND_RGBA_MULT
+        self.curr_img.blit(tint_surf, (0, 0), special_flags=flags)
 
 
     def draw(self, screen: pygame.Surface) -> None:
