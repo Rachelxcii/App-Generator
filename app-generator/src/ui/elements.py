@@ -355,6 +355,7 @@ class TextInput:
         
         self.colors = display_cfg['colors']
         self.font = display_cfg['fonts'][text_input_cfg.get('font', 'default')]
+        pygame.key.set_repeat(500, 50)
         
         # Initial state
         self.placeholder = text_input_cfg.get('placeholder', '')
@@ -391,44 +392,57 @@ class TextInput:
             was_active = self.active
             self.active = self.rect.collidepoint(event.pos)
             
-            if self.active and self.showing_placeholder:
-                # If it's the first time the user clicks inside the box, 
-                # the placeholder is still visible.
-                self.text = ""
-                self.showing_placeholder = False
-                self._update_surface()
-
-            elif not self.active and self.text == "":
-                # If user clicks outside the box and there is no text,
-                # the placeholder is restored.
-                self.text = self.placeholder
-                self.showing_placeholder = True
-                self._update_surface()
+            if self.active:
+                pygame.key.start_text_input()
+                if self.showing_placeholder:
+                    # If it's the first time the user clicks inside the box, 
+                    # the placeholder is still visible.
+                    self.text = ""
+                    self.showing_placeholder = False
+                    self._update_surface()
+            else:
+                if self.text == "":
+                    # If user clicks outside the box and there is no text,
+                    # the placeholder is restored.
+                    self.text = self.placeholder
+                    self.showing_placeholder = True
+                    self._update_surface()
 
             self.color_curr = self.color_active if self.active else self.color_passive            
 
         if self.active and event.type == pygame.KEYDOWN:
 
             if event.key == pygame.K_BACKSPACE:
-                if not self.showing_placeholder:
+
+                if not self.showing_placeholder and len(self.text) > 0:
                     self.text = self.text[:-1]
 
-            elif event.key == pygame.K_RETURN:
-                self.active = False
-                self.color_curr = self.color_passive
-                # Returns the text written by the user
-                return {"functions": self.text_input_cfg.get("functions", []), 
-                        "text": self.text}
-            
+                    if self.text == "":
+                        self.text = self.placeholder
+                        self.showing_placeholder = True
+                    
+                    self._update_surface()
+
+            elif event.key == pygame.K_RETURN: # TO-DO: Better multiline logic
+                if self.text_input_cfg.get('allow_multiline', False):
+                    self.text += "\n"
+                    self._update_surface()
+                else:
+                    self.active = False
+                    self.color_curr = self.color_passive
+                    pygame.key.stop_text_input()
+
             else:
-                # If the user starts to write, the placeholder is removed.
-                if self.showing_placeholder:
-                    self.text = ""
-                    self.showing_placeholder = False
-                
-                if len(self.text) < self.text_input_cfg.get('max_chars', 1000): 
-                    # event.unicode to take the real char
-                    self.text += event.unicode
+                if event.unicode.isprintable() and event.unicode != "":
+
+                    if self.showing_placeholder:
+                        # If the user starts to write, the placeholder is removed.
+                        self.text = ""
+                        self.showing_placeholder = False
+                    
+                    if len(self.text) < self.text_input_cfg.get('max_chars', 1000): 
+                        # event.unicode to take the real char
+                        self.text += event.unicode
             
             self._update_surface()
 
@@ -440,10 +454,25 @@ class TextInput:
         # Draws the edges of the box
         pygame.draw.rect(screen, self.color_curr, self.rect, 2)
         
-        if hasattr(self, 'text_surface'):
-            screen.blit(self.text_surface, 
-                        (self.rect.x + 5, 
-                         self.rect.y + (self.rect.height // 4)))
+        # Defines clip
+        clip_rect = self.rect.inflate(-4, -4) 
+        old_clip = screen.get_clip()
+        screen.set_clip(clip_rect)
+        
+        # Horizontal scroll logic, right alignment
+        text_width = self.text_surface.get_width()
+        max_width = self.rect.width - 10
+        
+        offset_x = 0
+        if text_width > max_width:
+            offset_x = max_width - text_width
+
+        # Draws text
+        text_pos = (self.rect.x + 5 + offset_x, self.rect.centery - (self.text_surface.get_height() // 2))
+        screen.blit(self.text_surface, text_pos)
+        
+        # Restores original clip
+        screen.set_clip(old_clip)
 
 
 class ProgressBar:
