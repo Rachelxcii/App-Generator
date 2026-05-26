@@ -1,4 +1,5 @@
 import pygame
+from typing import Optional
 
 
 class Button:
@@ -45,6 +46,9 @@ class Button:
 
 
     def _subtype_attr_loader(self, display_cfg: dict, button_cfg: dict):
+        '''
+        Loads mandatory attributes depending on the subtype button.
+        '''
         fonts = display_cfg['fonts']
         colors = display_cfg['colors']
         
@@ -73,6 +77,9 @@ class Button:
 
 
     def _transform_text(self):
+        '''
+        Transforms text to fit the button size.
+        '''
         raw_text = self.font.render(self.text, True, (255, 255, 255))
     
         if raw_text.get_width() > self.rect.width:
@@ -119,8 +126,41 @@ class Button:
         result_img.blit(tint_surf, (0, 0), special_flags=flags)
 
         return result_img
-            
+
+    
+    def get_actions(self) -> dict:
+        '''
+        Returns a dict with infomation about what MUST happen if a button is 
+        clicked.
+        Returns:
+            dict: A collection of action triggers containing:
+                - "redirection" (str/None): ID of the screen to navigate to.
+                - "functions" (list/str): Identifier(s) of logic to execute.
+        '''
+        return {
+            "redirection": self.redirection,
+            "functions": self.functions
+        }
+    
+
+    def handle_events(self, event: pygame.event.Event) -> Optional[dict]:
+        '''
+        Processes internal button logic: hover states and click detection.
         
+        Returns:
+            dict: The actions (functions and redirection) if clicked, else None.
+        '''
+        pos_mouse = pygame.mouse.get_pos()
+        self.is_hovering = self.rect.collidepoint(pos_mouse)
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:  # 1: left clic
+                if self.is_hovering:
+                    return self.get_actions()
+        
+        return None
+                
+
     def draw(self, screen: pygame.Surface) -> None:
         '''
         Handles the rendering of the button and the hover logic.
@@ -142,38 +182,6 @@ class Button:
         elif self.subtype == 'image':
             img = self.img_hover if is_hovering else self.img_base
             screen.blit(img, self.rect)
-
-    
-    def get_actions(self) -> dict:
-        '''
-        Returns a dict with infomation about what MUST happen if a button is 
-        clicked.
-        Returns:
-            dict: A collection of action triggers containing:
-                - "redirection" (str/None): ID of the screen to navigate to.
-                - "functions" (list/str): Identifier(s) of logic to execute.
-        '''
-        return {
-            "redirection": self.redirection,
-            "functions": self.functions
-        }
-
-
-    def button_clicked(self, event: pygame.event.Event) -> bool:
-        '''
-        Checks if the left mouse button was clicked within the button's area.
-
-        Args:
-            event (pygame.event.Event): The Pygame event to be processed.
-
-        Returns:
-            bool: True if the button was clicked, False otherwise.
-        '''
-
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.rect.collidepoint(event.pos):
-                return True
-        return False
     
 
 class Image:  # TO-DO: duda sobre draw, este method se ejecutara cada refresco de la screen o solo una vez???
@@ -232,7 +240,8 @@ class Image:  # TO-DO: duda sobre draw, este method se ejecutara cada refresco d
 
 
     def draw(self, screen: pygame.Surface) -> None:
-        '''Loads and renders the image to the destination surface.
+        '''
+        Loads and renders the image to the destination surface.
         
         Args:
             screen (pygame.Surface): Surface where text will be blitted.
@@ -278,7 +287,7 @@ class Text:
         
         def _prepare_surface(self):
             '''
-            Generates final text surface
+            Generates final text surface.
             '''
             raw_surface = self.font.render(self.text, True, self.color)
 
@@ -341,26 +350,25 @@ class TextInput:
         self.rect = pygame.Rect(text_input_cfg['position']['x'], 
                                 text_input_cfg['position']['y'], 
                                 text_input_cfg['size']['width'], 
-                                text_input_cfg['size']['height'])
+                                text_input_cfg['size']['height']) 
         
         self.colors = display_cfg['colors']
         self.font = display_cfg['fonts'][text_input_cfg.get('font', 'default')]
+        self.text_input_cfg = text_input_cfg
         
-        self.text = ""
+        self.text = text_input_cfg.get('placeholder', '')
         self.active = False
         
-        self.color_active = self.colors.get(text_input_cfg.get('color_active'), 
-                                            (255, 255, 255))
-        self.color_passive = self.colors.get(text_input_cfg.get('color_passive'), 
-                                             (100, 100, 100))
+        self.color_active = self.colors.get(text_input_cfg.get('active'), (255, 255, 255))
+        self.color_passive = self.colors.get(text_input_cfg.get('passive'), (100, 100, 100))
         self.color_curr = self.color_passive
+
 
     def handle_events(self, event: pygame.event.Event) -> None:
         '''
         Manages focus toggling and keyboard capture.
         '''
         if event.type == pygame.MOUSEBUTTONDOWN:
-            # Toggle focus if user clicks the box
             self.active = self.rect.collidepoint(event.pos)
             self.color_curr = self.color_active if self.active else self.color_passive
 
@@ -368,22 +376,18 @@ class TextInput:
             if event.key == pygame.K_BACKSPACE:
                 self.text = self.text[:-1]
             elif event.key == pygame.K_RETURN:
-                self.active = False  # Finish input
+                self.active = False
                 self.color_curr = self.color_passive
             else:
-                # Limit text length to avoid overflow (optional logic)
-                if len(self.text) < 20: 
+                if len(self.text) < self.text_input_cfg.get('max_chars', 1000): 
                     self.text += event.unicode
 
     def draw(self, screen: pygame.Surface) -> None:
-        '''Renders the input box and the current text.'''
-        # 1. Draw the background/border
+        '''
+        Renders the input box and the current text.
+        '''
         pygame.draw.rect(screen, self.color_curr, self.rect, 2)
-        
-        # 2. Render the text
         text_surface = self.font.render(self.text, True, self.colors.get('text', (255, 255, 255)))
-        
-        # 3. Blit with a small padding
         screen.blit(text_surface, (self.rect.x + 5, self.rect.y + (self.rect.height // 4)))
 
 
@@ -392,7 +396,7 @@ class ProgressBar:
     def __inti__(self):
         pass
 
-    # En el método draw de ProgressBar
+
     def draw(self, screen):
         # Consultamos el porcentaje actual a la lógica de la App
         progress = self.app_logic.get_status(self.monitored_action) # Devuelve 0.0 a 1.0

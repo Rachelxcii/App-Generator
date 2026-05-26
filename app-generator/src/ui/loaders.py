@@ -1,7 +1,7 @@
 import pygame
 from collections import defaultdict
 
-from src.ui.elements import Button, Image, Text
+from src.ui.elements import Button, Image, Text, TextInput
 
 
 def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
@@ -24,23 +24,29 @@ def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
     buttons_cfg = categories['button']
     images_cfg = categories['image']
     texts_cfg = categories['text']
+    text_inputs_cfg = categories['text_input']
 
-    output = []
+    elements = []
 
     if buttons_cfg:
         buttons = buttons_loader(display_cfg=display_cfg,
                                      buttons_cfg=buttons_cfg)
-        output += buttons
+        elements += buttons
         
     if images_cfg:
         images = images_loader(display_cfg=display_cfg, images_cfg=images_cfg)
-        output += images
+        elements += images
     
     if texts_cfg:
         texts = texts_loader(display_cfg=display_cfg, texts_cfg=texts_cfg)
-        output += texts
+        elements += texts
+
+    if text_inputs_cfg:
+        text_inputs = text_inputs_loader(display_cfg=display_cfg, 
+                                         text_inputs_cfg=text_inputs_cfg)
+        elements += text_inputs
     
-    return output
+    return elements
     
     
 def buttons_loader(display_cfg: dict, buttons_cfg: dict) -> list:
@@ -115,6 +121,25 @@ def fonts_loader(display_cfg: dict) -> dict:
         fonts[key] = pygame.font.Font(str(path), data['size'])
         
     return fonts
+
+
+def text_inputs_loader(display_cfg: dict, text_inputs_cfg: dict) -> list:
+    '''
+    Parses text configuration data to instantiate UI Text objects.
+
+    Args:
+        display_cfg (dict): Global display and asset settings.
+        text_inputs (dict): Nested dictionary containing text inputs 
+                            configuration.
+
+    Returns:
+        list: A collection of initialized TextInput instances.
+    '''
+    text_inputs = []
+    for text_input_cfg in text_inputs_cfg:
+        text_inputs.append(TextInput(display_cfg=display_cfg, 
+                                     text_input_cfg=text_input_cfg))
+    return text_inputs
 
 
 if __name__ == '__main__':

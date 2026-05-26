@@ -34,6 +34,10 @@
             "parchment": [228, 215, 183]
         },
         "fonts": {
+            "default":{
+                "file": "Quicksand/Quicksand-Regular.ttf",
+                "size": 30
+            },
             "sml_button": {
                 "file": "Metamorphous/Metamorphous-Regular.ttf",
                 "size": 30
@@ -141,17 +145,17 @@
             "user_input_prompt": {
                 "type": "text_input",
                 "position": {"x": 100, "y": 200},
-                "size": {"width": 600, "height": 50},
-                "font": "body_font",
+                "size": {"width": 500, "height": 50},
+                "font": "default",
                 "placeholder": "Pega aquí tu texto para procesar...",
-                "max_chars": 5000,
+                "max_chars": 100,
+                "allow_multiline": true,
                 "colors": {
-                    "background": "input_bg",
-                    "border_idle": "gray_dark",
-                    "border_active": "primary_blue",
-                    "text": "white"
-                },
-                "allow_multiline": true
+                    "background": "onyx",
+                    "passive": "shadow",
+                    "active": "parchment",
+                    "text": "parchment"
+                }
             },
             "generation_progress": {
                 "type": "progress_bar",

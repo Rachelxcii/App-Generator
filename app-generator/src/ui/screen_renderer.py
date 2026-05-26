@@ -1,14 +1,19 @@
 import pygame
+from typing import Optional
 
 import src.ui.external_functions
 import src.ui.internal_functions
 from src.ui.loaders import element_detector
-from src.ui.elements import Button
+from src.ui.elements import Button, TextInput
 
 
-app_functions_registry = {
-    "reset": src.ui.internal_functions.reset_maze,
-    "save": src.ui.internal_functions.save_data,
+internal_functions_registry = {
+    'reset': src.ui.internal_functions.reset_maze,
+    'save': src.ui.internal_functions.save_data,
+}
+
+external_functions_registry = {
+    
 }
 
 
@@ -62,7 +67,14 @@ class Screen:
                                          elements_cfg=self.elements_cfg)
         
         self.buttons = [el for el in self.elements if type(el) == Button]
-        self.external_registry = app_functions_registry
+        self.text_inputs = [el for el in self.elements if type(el) == TextInput]
+
+        ctrl_types = {Button, TextInput}
+
+        self.controls = [el for el in self.elements if type(el) in ctrl_types]
+
+        self.internal_registry = internal_functions_registry
+        self.external_registry = external_functions_registry
 
 
     def draw(self, screen) -> None:
@@ -78,7 +90,7 @@ class Screen:
             el.draw(screen)
 
 
-    def handle_events(self, event) -> None:
+    def handle_events(self, event: pygame.event.Event) -> Optional[str]:
         '''
         Processes user input and interactions for this specific screen.
 
@@ -87,45 +99,65 @@ class Screen:
                                         event queue.
         '''
         if event.type == pygame.QUIT:
-            return "exit"
+            return 'exit'
         
-        for button in self.buttons:
-            if button.button_clicked(event):
-                actions = button.get_actions()
-                
-                if actions["functions"]:
-                    for func_name in actions["functions"]:
-                        if func_name == "exit":
-                            return "exit"
-                        self._execute_external_function(func_name)
-                
-                if actions["redirection"]:
-                    return actions["redirection"]
+        for element in self.controls:
+            response = element.handle_events(event)
+            
+            if response:
+                return self._process_element_response(response)
                     
         return None
     
-    
-    def _execute_external_function(self, func_name):
-        """
-        Retrieves a function from the registry and executes it.
-        
-        Uses Dependency Injection by passing 'self' (current screen instance) 
-        as an argument, allowing the external function to access and modify 
-        the screen's state or data.
 
+    def _process_element_response(self, response: dict) -> Optional[str]:
+        '''
+        Centralizes the logic for executing functions and handling redirections.
+        
         Args:
-            func_name (str): The unique identifier of the function within 
-                             the external registry.
-        """
+            response (dict): Data returned by an interactive element's handle_events.
+            
+        Returns:
+            str | None: The redirection target if present, else None.
+        '''
+        functions = response.get('functions', [])
+        for func_name in functions:
+            if not func_name: continue
+            
+            if func_name == 'exit':
+                return 'exit'
+            
+            if not self._execute_internal_function(func_name):
+                self._execute_external_function(func_name)
+
+        return response.get('redirection')
+    
+
+    def _execute_internal_function(self, func_name):
+        '''
+        Retrieves a function from the internal registry, executes it and 
+        returns True, if the function exists.
+        If the function doesn't exist, return False.
+        '''
+        func = self.internal_registry.get(func_name)
+        if callable(func):
+            func(self)
+            return True
+        return False
+
+
+    def _execute_external_function(self, func_name):
+        '''
+        Retrieves a function from the external registry, executes it, 
+        if the function exists.
+        If the function doesn't exist, prints ERROR.
+        '''
         func = self.external_registry.get(func_name)
-
-        print(f'{self.screen_cfg["ID"]}')
-        
-        if func:
-            func(self) 
+        if callable(func):
+            func(self)
         else:
-            print(f"ERROR: Function '{func_name}' is not registered.")
+            print(f'ERROR: Function "{func_name}" not found in any registry.')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pass

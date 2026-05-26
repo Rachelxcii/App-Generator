@@ -8,6 +8,8 @@ app_functions_registry = {
 }
         '''
 
+def exit(screen_instance):
+    return "exit"
 
 def reset_maze(screen_instance):
     """
