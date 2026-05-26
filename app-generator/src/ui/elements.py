@@ -347,6 +347,7 @@ class TextInput:
         '''
         Initializes the Input field with styling and positioning.
         '''
+        self.text_input_cfg = text_input_cfg
         self.rect = pygame.Rect(text_input_cfg['position']['x'], 
                                 text_input_cfg['position']['y'], 
                                 text_input_cfg['size']['width'], 
@@ -354,44 +355,101 @@ class TextInput:
         
         self.colors = display_cfg['colors']
         self.font = display_cfg['fonts'][text_input_cfg.get('font', 'default')]
-        self.text_input_cfg = text_input_cfg
         
-        self.text = text_input_cfg.get('placeholder', '')
+        # Initial state
+        self.placeholder = text_input_cfg.get('placeholder', '')
+        self.text = self.placeholder
         self.active = False
+        self.showing_placeholder = True
         
-        self.color_active = self.colors.get(text_input_cfg.get('active'), (255, 255, 255))
-        self.color_passive = self.colors.get(text_input_cfg.get('passive'), (100, 100, 100))
+        #Colors
+        self.color_active = self.colors.get(text_input_cfg.get('active_color'), (255, 255, 255))
+        self.color_passive = self.colors.get(text_input_cfg.get('passive_color'), (100, 100, 100))
         self.color_curr = self.color_passive
+        self.color_text = self.colors.get('text', (255, 255, 255))
+        self.color_placeholder = (150, 150, 150)
 
+        # Initial render
+        self._update_surface()
+    
+
+    def _update_surface(self):
+        '''
+        Renders the text surface.
+        '''
+        color = self.color_placeholder if self.showing_placeholder else self.color_text
+        display_text = self.text if self.text != "" else " "
+        self.text_surface = self.font.render(display_text, True, color)
+        
 
     def handle_events(self, event: pygame.event.Event) -> None:
         '''
         Manages focus toggling and keyboard capture.
+        There are some comments to clarify how the code works.
         '''
         if event.type == pygame.MOUSEBUTTONDOWN:
+            was_active = self.active
             self.active = self.rect.collidepoint(event.pos)
-            self.color_curr = self.color_active if self.active else self.color_passive
+            
+            if self.active and self.showing_placeholder:
+                # If it's the first time the user clicks inside the box, 
+                # the placeholder is still visible.
+                self.text = ""
+                self.showing_placeholder = False
+                self._update_surface()
+
+            elif not self.active and self.text == "":
+                # If user clicks outside the box and there is no text,
+                # the placeholder is restored.
+                self.text = self.placeholder
+                self.showing_placeholder = True
+                self._update_surface()
+
+            self.color_curr = self.color_active if self.active else self.color_passive            
 
         if self.active and event.type == pygame.KEYDOWN:
+
             if event.key == pygame.K_BACKSPACE:
-                self.text = self.text[:-1]
+                if not self.showing_placeholder:
+                    self.text = self.text[:-1]
+
             elif event.key == pygame.K_RETURN:
                 self.active = False
                 self.color_curr = self.color_passive
+                # Returns the text written by the user
+                return {"functions": self.text_input_cfg.get("functions", []), 
+                        "text": self.text}
+            
             else:
+                # If the user starts to write, the placeholder is removed.
+                if self.showing_placeholder:
+                    self.text = ""
+                    self.showing_placeholder = False
+                
                 if len(self.text) < self.text_input_cfg.get('max_chars', 1000): 
+                    # event.unicode to take the real char
                     self.text += event.unicode
+            
+            self._update_surface()
+
 
     def draw(self, screen: pygame.Surface) -> None:
         '''
         Renders the input box and the current text.
         '''
+        # Draws the edges of the box
         pygame.draw.rect(screen, self.color_curr, self.rect, 2)
-        text_surface = self.font.render(self.text, True, self.colors.get('text', (255, 255, 255)))
-        screen.blit(text_surface, (self.rect.x + 5, self.rect.y + (self.rect.height // 4)))
+        
+        if hasattr(self, 'text_surface'):
+            screen.blit(self.text_surface, 
+                        (self.rect.x + 5, 
+                         self.rect.y + (self.rect.height // 4)))
 
 
 class ProgressBar:
+    '''
+    --- WIP ---
+    '''
 
     def __inti__(self):
         pass
