@@ -385,4 +385,19 @@ class TextInput:
         
         # 3. Blit with a small padding
         screen.blit(text_surface, (self.rect.x + 5, self.rect.y + (self.rect.height // 4)))
+
+
+class ProgressBar:
+
+    def __inti__(self):
+        pass
+
+    # En el método draw de ProgressBar
+    def draw(self, screen):
+        # Consultamos el porcentaje actual a la lógica de la App
+        progress = self.app_logic.get_status(self.monitored_action) # Devuelve 0.0 a 1.0
+        
+        # Dibujamos proporcionalmente
+        fill_width = self.width * progress
+        pygame.draw.rect(screen, self.color_fill, (self.x, self.y, fill_width, self.height))
     

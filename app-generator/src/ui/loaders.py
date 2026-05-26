@@ -1,4 +1,5 @@
 import pygame
+from collections import defaultdict
 
 from src.ui.elements import Button, Image, Text
 
@@ -14,11 +15,11 @@ def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
     Returns:
         list: A list of initialized UI component objects (Buttons, Texts ...).
     '''
+    categories = defaultdict(list)
 
-    categories = {'button': [], 'image': [], 'text': []}
-
-    for el in elements_cfg:
-        categories[elements_cfg[el]['type']].append(elements_cfg[el])
+    for id, el_cfg in elements_cfg.items():
+        el_cfg['id'] = id
+        categories[el_cfg.get('type', 'unknown')].append(el_cfg)
 
     buttons_cfg = categories['button']
     images_cfg = categories['image']

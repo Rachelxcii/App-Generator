@@ -20,7 +20,18 @@
             "button_hover": [72, 72, 74],
             "plain_txt": [228, 215, 183],
             "title_txt": [228, 215, 183],
-            "tint_color": [255, 0, 0]
+            "pitch": [17, 19, 17],
+            "onyx": [19, 17, 19],
+            "carbon": [28, 27, 27],
+            "moss": [54, 60, 53],
+            "obsidian": [59, 53, 60],
+            "shadow": [67, 61, 68],
+            "mud": [67, 64, 57],
+            "slate": [72, 72, 74],
+            "aubergine": [97, 64, 81],
+            "sage": [91, 101, 89],
+            "thistle": [99, 89, 101],
+            "parchment": [228, 215, 183]
         },
         "fonts": {
             "sml_button": {
@@ -63,7 +74,7 @@
                 "size": {"width": 150, "height": 150},
                 "text": "SEC.",
                 "font": "sml_button",
-                "color": {"base": "button_base", "hover": "button_hover"},
+                "color": {"base": "thistle", "hover": "aubergine"},
                 "redirection": "SECONDARY-SCREEN",
                 "functions": [""]
             },
@@ -74,7 +85,7 @@
                 "size": {"width": 150, "height": 150},
                 "text": "USELESS",
                 "font": "sml_button",
-                "color": {"base": "button_base", "hover": "button_hover"},
+                "color": {"base": "thistle", "hover": "aubergine"},
                 "redirection": "",
                 "functions": [""]
             },
@@ -85,20 +96,21 @@
                 "size": {"width": 150, "height": 150},
                 "text": "EXIT",
                 "font": "sml_button",
-                "color": {"base": "button_base", "hover": "button_hover"},
+                "color": {"base": "thistle", "hover": "aubergine"},
                 "redirection": "",
                 "functions": ["exit"]
             },
             "logo_image":{
                 "type": "image",
-                "file": "rachelxcii_logo_transparent.PNG",
+                "file": "rachelxcii_logo.png",
                 "position" : {"x": 325, "y": 425},
-                "size": {"width": 50, "height": 50}
+                "size": {"width": 50, "height": 50},
+                "tint_color": "thistle"
             }
         }
     },
 
-    "generator_screen": {
+    "secondary_screen": {
         "ID": "SECONDARY-SCREEN",
         "elements": {
             "return_button": {
@@ -106,10 +118,10 @@
                 "subtype": "image",
                 "position" : {"x": 50, "y": 50},
                 "size": {"width": 50, "height": 100},
-                "image": {"base": "arrow_back.png", "hover": "arrow_back.png"},
+                "image": {"base": "return_button.png", "hover": "return_button.png"},
                 "redirection": "MAIN-SCREEN",
                 "functions": [""],
-                "tint_color": {"base": "", "hover": "tint_color"}
+                "tint_color": {"base": "thistle", "hover": "aubergine"}
             },
             "screen_title": {
                 "type": "text",
@@ -121,10 +133,39 @@
             },
             "logo_image":{
                 "type": "image",
-                "file": "rachelxcii_logo_transparent.PNG",
+                "file": "rachelxcii_logo.png",
                 "position" : {"x": 325, "y": 425},
                 "size": {"width": 50, "height": 50},
-                "tint_color": "tint_color"
+                "tint_color": "thistle"
+            },
+            "user_input_prompt": {
+                "type": "text_input",
+                "position": {"x": 100, "y": 200},
+                "size": {"width": 600, "height": 50},
+                "font": "body_font",
+                "placeholder": "Pega aquí tu texto para procesar...",
+                "max_chars": 5000,
+                "colors": {
+                    "background": "input_bg",
+                    "border_idle": "gray_dark",
+                    "border_active": "primary_blue",
+                    "text": "white"
+                },
+                "allow_multiline": true
+            },
+            "generation_progress": {
+                "type": "progress_bar",
+                "monitors": "",
+                "position": {"x": 100, "y": 500},
+                "size": {"width": 600, "height": 20},
+                "style": "linear",
+                "show_percentage": true,
+                "colors": {
+                    "bar_bg": "gray_dark",
+                    "fill": "success_green",
+                    "text": "white"
+                },
+                "border_radius": 10
             }
         }
     }
