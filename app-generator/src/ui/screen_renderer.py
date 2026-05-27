@@ -1,20 +1,12 @@
 import pygame
+import threading
 from typing import Optional
 
-import src.ui.external_functions
-import src.ui.internal_functions
 from src.ui.loaders import element_detector
-from src.ui.elements import Button, TextInput
+from src.ui.elements import Button, TextInput, LoadingIcon
 
-
-internal_functions_registry = {
-    'reset': src.ui.internal_functions.reset_maze,
-    'save': src.ui.internal_functions.save_data,
-}
-
-external_functions_registry = {
-    
-}
+from src.functions.functions_registry import (internal_functions_registry, 
+                                              external_functions_registry)
 
 
 def screens_loader(display_cfg: dict, screens_cfg: dict) -> dict:
@@ -56,6 +48,10 @@ class Screen:
         '''
         Initializes the screen and its components from configuration.
         '''
+        self.internal_registry = internal_functions_registry
+        self.external_registry = external_functions_registry
+        funcs_registry = self.internal_registry | self.external_registry
+
         self.display_cfg = display_cfg
         self.screen_cfg = screen_cfg
         self.elements_cfg = screen_cfg['elements']
@@ -64,17 +60,15 @@ class Screen:
         self.fonts = display_cfg['fonts']
 
         self.elements = element_detector(display_cfg=self.display_cfg,
-                                         elements_cfg=self.elements_cfg)
-        
-        self.buttons = [el for el in self.elements if type(el) == Button]
-        self.text_inputs = [el for el in self.elements if type(el) == TextInput]
+                                         elements_cfg=self.elements_cfg,
+                                         funcs_registry = funcs_registry)
 
         ctrl_types = {Button, TextInput}
-
         self.controls = [el for el in self.elements if type(el) in ctrl_types]
 
-        self.internal_registry = internal_functions_registry
-        self.external_registry = external_functions_registry
+        self.func_loading_icon = {el.func: el for el in self.elements if type(el)==LoadingIcon}
+
+        print(f'FUNCTIONS WITH LOADING ICON: {self.func_loading_icon}')
 
 
     def draw(self, screen) -> None:
@@ -127,37 +121,49 @@ class Screen:
             if func_name == 'exit':
                 return 'exit'
             
-            if not self._execute_internal_function(func_name):
-                self._execute_external_function(func_name)
+            # --- FUNCTIONS FROM FUNCS REGISTRIES RUN IN ASYNC MODE ---
+            internal_check = self.internal_registry.get(func_name)
+            external_check = self.external_registry.get(func_name)
+            func = internal_check or external_check
+        
+            if callable(func):
+                loadering_icon = self._get_loader_for_function(func_name)
+                
+                thread = threading.Thread(
+                    target=self._async_wrapper, 
+                    args=(func, loadering_icon)
+                )
+                # Daemon attr. to ensure thread doesn't block or close the app
+                thread.daemon = True 
+                thread.start()
+            else:
+                print(f'ERROR: Function "{func_name}" not found.')
 
         return response.get('redirection')
     
 
-    def _execute_internal_function(self, func_name):
+    def _get_loader_for_function(self, func_name):
         '''
-        Retrieves a function from the internal registry, executes it and 
-        returns True, if the function exists.
-        If the function doesn't exist, return False.
+        
         '''
-        func = self.internal_registry.get(func_name)
-        if callable(func):
-            func(self)
-            return True
-        return False
+        if func_name in self.func_loading_icon:
+            return self.func_loading_icon[func_name]
+        return None
 
 
-    def _execute_external_function(self, func_name):
+    def _async_wrapper(self, func, loadering_icon):
         '''
-        Retrieves a function from the external registry, executes it, 
-        if the function exists.
-        If the function doesn't exist, prints ERROR.
+        
         '''
-        func = self.external_registry.get(func_name)
-        if callable(func):
-            func(self)
-        else:
-            print(f'ERROR: Function "{func_name}" not found in any registry.')
+        if loadering_icon:
+            loadering_icon.is_running = True
+        
+        try:
+            func(self) 
+        finally:
+            if loadering_icon:
+                loadering_icon.is_running = False
 
 
 if __name__ == '__main__':
-    pass
+    pass    

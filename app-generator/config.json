@@ -122,7 +122,10 @@
                 "subtype": "image",
                 "position" : {"x": 50, "y": 50},
                 "size": {"width": 50, "height": 100},
-                "image": {"base": "return_button.png", "hover": "return_button.png"},
+                "image": {
+                    "base": "return_button.png", 
+                    "hover": "return_button.png"
+                },
                 "redirection": "MAIN-SCREEN",
                 "functions": [""],
                 "tint_color": {"base": "thistle", "hover": "aubergine"}
@@ -149,7 +152,7 @@
                 "font": "default",
                 "placeholder": "Pega aquí tu texto para procesar...",
                 "max_chars": 100,
-                "allow_multiline": true,
+                "allow_multiline": false,
                 "colors": {
                     "background": "onyx",
                     "passive": "shadow",
@@ -157,19 +160,30 @@
                     "text": "parchment"
                 }
             },
-            "generation_progress": {
-                "type": "progress_bar",
-                "monitors": "",
-                "position": {"x": 100, "y": 500},
-                "size": {"width": 600, "height": 20},
-                "style": "linear",
-                "show_percentage": true,
-                "colors": {
-                    "bar_bg": "gray_dark",
-                    "fill": "success_green",
-                    "text": "white"
-                },
-                "border_radius": 10
+            "timer_button": {
+                "type": "button",
+                "subtype": "text",
+                "position" : {"x": 100, "y": 300},
+                "size": {"width": 150, "height": 150},
+                "text": "TIMER",
+                "font": "sml_button",
+                "color": {"base": "thistle", "hover": "aubergine"},
+                "redirection": "",
+                "functions": ["timer"]
+            },
+            "loading_bfs_solver": {
+                "type": "loading_icon",
+                "monitored_function": "timer",
+                "position": {"x": 300, "y": 300},
+                "size": {"width": 50, "height": 50},
+                "image_or_gif": "browse_activity.png"
+            },
+            "monitor_icon":{
+                "type": "image",
+                "file": "browse_activity.png",
+                "position": {"x": 300, "y": 400},
+                "size": {"width": 50, "height": 50},
+                "tint_color": "thistle"
             }
         }
     }

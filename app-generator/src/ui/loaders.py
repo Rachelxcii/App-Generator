@@ -1,10 +1,10 @@
 import pygame
 from collections import defaultdict
 
-from src.ui.elements import Button, Image, Text, TextInput
+from src.ui.elements import Button, Image, Text, TextInput, LoadingIcon
 
 
-def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
+def element_detector(display_cfg: dict, elements_cfg: dict, funcs_registry: dict) -> list:
     '''
     Identifies and instantiates UI objects from elements configuration.
 
@@ -21,16 +21,17 @@ def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
         el_cfg['id'] = id
         categories[el_cfg.get('type', 'unknown')].append(el_cfg)
 
-    buttons_cfg = categories['button']
-    images_cfg = categories['image']
-    texts_cfg = categories['text']
-    text_inputs_cfg = categories['text_input']
+    buttons_cfg = categories.get('button', '')
+    images_cfg = categories.get('image', '')
+    texts_cfg = categories.get('text', '')
+    text_inputs_cfg = categories.get('text_input', '')
+    loading_icons_cfg = categories.get('loading_icon', '')
 
     elements = []
 
     if buttons_cfg:
-        buttons = buttons_loader(display_cfg=display_cfg,
-                                     buttons_cfg=buttons_cfg)
+        buttons = buttons_loader(display_cfg=display_cfg, 
+                                 buttons_cfg=buttons_cfg)
         elements += buttons
         
     if images_cfg:
@@ -45,6 +46,12 @@ def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
         text_inputs = text_inputs_loader(display_cfg=display_cfg, 
                                          text_inputs_cfg=text_inputs_cfg)
         elements += text_inputs
+
+    if loading_icons_cfg:
+        loading_icons = loading_icons_loader(display_cfg=display_cfg, 
+                                             loading_icons_cfg=loading_icons_cfg,
+                                             funcs_registry=funcs_registry)
+        elements += loading_icons
     
     return elements
     
@@ -140,6 +147,26 @@ def text_inputs_loader(display_cfg: dict, text_inputs_cfg: dict) -> list:
         text_inputs.append(TextInput(display_cfg=display_cfg, 
                                      text_input_cfg=text_input_cfg))
     return text_inputs
+
+
+def loading_icons_loader(display_cfg: dict, loading_icons_cfg: dict, 
+                         funcs_registry: dict) -> list:
+    '''
+    Parses configuration data to instantiate UI Loading Icon objects.
+
+    Args:
+        display_cfg (dict): Global display and asset settings.
+        text_inputs (dict): Nested dictionary containing loading icons
+                            configuration.
+
+    Returns:
+        list: A collection of initialized TextInput instances.
+    '''
+    loading_icons = []
+    for loading_icon_cfg in loading_icons_cfg:
+        loading_icons.append(LoadingIcon(display_cfg=display_cfg,
+                                         loading_icon_cfg=loading_icon_cfg))
+    return loading_icons
 
 
 if __name__ == '__main__':

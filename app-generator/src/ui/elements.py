@@ -1,4 +1,5 @@
 import pygame
+import threading
 from typing import Optional
 
 
@@ -102,13 +103,11 @@ class Button:
         tint_cfg = button_cfg.get("tint_color")
         
         if tint_cfg.get('base'):
-            print(f'TINT BASE: {tint_cfg["base"]}')
             color = display_cfg['colors'].get(tint_cfg['base'])
             self.img_base = self._execute_tint(surface=self.img_base, 
                                                color=color)
 
         if tint_cfg.get('hover'):
-            print(f'TINT HOVER: {tint_cfg["hover"]}')
             color = display_cfg['colors'].get(tint_cfg['hover'])
             self.img_hover = self._execute_tint(surface=self.img_hover,
                                                color=color)
@@ -184,7 +183,7 @@ class Button:
             screen.blit(img, self.rect)
     
 
-class Image:  # TO-DO: duda sobre draw, este method se ejecutara cada refresco de la screen o solo una vez???
+class Image:
     '''
     A class to represent and render a static image in Pygame.
 
@@ -292,8 +291,6 @@ class Text:
             raw_surface = self.font.render(self.text, True, self.color)
 
             if self.size_cfg:
-                print(f'TEXT: {self.text} - HAS SIZE CONFIG')
-
                 width = self.size_cfg['width']
                 height = self.size_cfg['height']
                 self.rect = pygame.Rect(self.x, self.y, width, height)
@@ -311,7 +308,6 @@ class Text:
                 self.draw_pos = self.surface.get_rect(center=center)
 
             else:
-                print(f'TEXT: {self.text} - HAS NOT SIZE CONFIG')
                 self.surface = raw_surface
                 self.draw_pos = (self.x, self.y)
             
@@ -475,20 +471,67 @@ class TextInput:
         screen.set_clip(old_clip)
 
 
-class ProgressBar:
+class LoadingIcon:
     '''
-    --- WIP ---
+    WIP
     '''
 
-    def __inti__(self):
-        pass
+    def __init__(self, display_cfg: dict, loading_icon_cfg: dict):
+        '''
 
+        functions_registry: internal_functions_registry and 
+        external_functions_registry from screen_renderer.py
 
-    def draw(self, screen):
-        # Consultamos el porcentaje actual a la lógica de la App
-        progress = self.app_logic.get_status(self.monitored_action) # Devuelve 0.0 a 1.0
+        '''
+        self.x = loading_icon_cfg['position']['x']
+        self.y = loading_icon_cfg['position']['y']
+        self.width = loading_icon_cfg['size']['width']
+        self.height = loading_icon_cfg['size']['height']
+        self.pos = (self.x, self.y)
+        self.monitored_func_name = loading_icon_cfg.get('monitored_function')
+        path_dir = display_cfg['paths']['images']
+        self.path_image = path_dir / loading_icon_cfg['image_or_gif']
+
+        self.func = loading_icon_cfg['monitored_function']
+        self.is_running = False
+
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+        self.raw_img = pygame.image.load(str(self.path_image)).convert_alpha()
+        self.raw_img = pygame.transform.smoothscale(self.raw_img, 
+                                                    (self.width, self.height))
         
-        # Dibujamos proporcionalmente
-        fill_width = self.width * progress
-        pygame.draw.rect(screen, self.color_fill, (self.x, self.y, fill_width, self.height))
+        self.curr_img = self.raw_img.copy()
+        tint_color = loading_icon_cfg.get('tint_color')
+
+        if tint_color:
+            target_rgb = display_cfg['colors'].get(tint_color, (255, 255, 255))
+            self._tint_image(target_rgb)
+
+
+    def _tint_image(self, rgb_color: tuple):
+        '''
+        Applies a color tint to the image while preserving transparency.
+        '''
+        tint_surf = pygame.Surface((self.width, self.height)).convert_alpha()
+        tint_surf.fill(rgb_color)
+        
+        self.curr_img = self.raw_img.copy()
+        flags = pygame.BLEND_RGBA_MULT
+        self.curr_img.blit(tint_surf, (0, 0), special_flags=flags)
+
+
+    def draw(self, screen: pygame.Surface) -> None:
+        '''
+        Loads and renders the image to the destination surface.
+        
+        Args:
+            screen (pygame.Surface): Surface where text will be blitted.
+
+        Returns:
+            None
+        '''
+        if self.is_running:
+            screen.blit(self.curr_img, self.rect)
+
     

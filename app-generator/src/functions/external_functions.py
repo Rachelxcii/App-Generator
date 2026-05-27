@@ -1,16 +1,3 @@
-import pygame
-
-'''
-app_functions_registry = {
-    "reset": src.ui.app_functions.reset_maze,
-    "save": src.ui.app_functions.save_data,
-    "exit": src.ui.app_functions.custom_exit
-}
-        '''
-
-def exit(screen_instance):
-    return "exit"
-
 def reset_maze(screen_instance):
     """
     Resets the maze generation state.
@@ -26,6 +13,3 @@ def save_data(screen_instance):
     """
     print("System: Exporting session statistics to CSV...")
     # TO-DO: Logic for data persistence goes here
-
-
-
