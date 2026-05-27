@@ -494,6 +494,8 @@ class LoadingIcon:
 
         self.func = loading_icon_cfg['monitored_function']
         self.is_running = False
+        self.rotation = loading_icon_cfg.get('rotation')
+        self.angle = 0
 
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
@@ -532,6 +534,16 @@ class LoadingIcon:
             None
         '''
         if self.is_running:
-            screen.blit(self.curr_img, self.rect)
+            if self.rotation:
+                self.angle = (self.angle - 5) % 360
+                center_x = self.x + self.width // 2
+                center_y = self.y + self.height // 2
+                
+                rotated_image = pygame.transform.rotate(self.curr_img, self.angle)
+                rect = rotated_image.get_rect(center=(center_x, center_y))
+                screen.blit(rotated_image, rect.topleft)
+
+            else:
+                screen.blit(self.curr_img, self.rect)
 
     

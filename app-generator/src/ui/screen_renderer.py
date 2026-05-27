@@ -1,6 +1,7 @@
 import pygame
 import threading
 from typing import Optional
+from collections import defaultdict
 
 from src.ui.loaders import element_detector
 from src.ui.elements import Button, TextInput, LoadingIcon
@@ -51,6 +52,7 @@ class Screen:
         self.internal_registry = internal_functions_registry
         self.external_registry = external_functions_registry
         funcs_registry = self.internal_registry | self.external_registry
+        self.func_from_registry_is_running = False
 
         self.display_cfg = display_cfg
         self.screen_cfg = screen_cfg
@@ -66,9 +68,11 @@ class Screen:
         ctrl_types = {Button, TextInput}
         self.controls = [el for el in self.elements if type(el) in ctrl_types]
 
-        self.func_loading_icon = {el.func: el for el in self.elements if type(el)==LoadingIcon}
 
-        print(f'FUNCTIONS WITH LOADING ICON: {self.func_loading_icon}')
+        self.func_loading_icons = defaultdict(list)
+        for el in self.elements:
+            if isinstance(el, LoadingIcon):
+                self.func_loading_icons[el.func].append(el)
 
 
     def draw(self, screen) -> None:
@@ -121,20 +125,20 @@ class Screen:
             if func_name == 'exit':
                 return 'exit'
             
-            # --- FUNCTIONS FROM FUNCS REGISTRIES RUN IN ASYNC MODE ---
+            # --- MULTITHREADING LOGIC ---
             internal_check = self.internal_registry.get(func_name)
             external_check = self.external_registry.get(func_name)
             func = internal_check or external_check
         
             if callable(func):
-                loadering_icon = self._get_loader_for_function(func_name)
+                loadering_icons = self._get_loading_icons_for_func(func_name)
                 
                 thread = threading.Thread(
-                    target=self._async_wrapper, 
-                    args=(func, loadering_icon)
+                    target=self._func_wrapper, 
+                    args=(func, loadering_icons)
                 )
-                # Daemon attr. to ensure thread doesn't block or close the app
-                thread.daemon = True 
+                # Daemon = False, to ensure thread block the app until ends.
+                thread.daemon = False 
                 thread.start()
             else:
                 print(f'ERROR: Function "{func_name}" not found.')
@@ -142,27 +146,27 @@ class Screen:
         return response.get('redirection')
     
 
-    def _get_loader_for_function(self, func_name):
+    def _get_loading_icons_for_func(self, func_name):
         '''
         
         '''
-        if func_name in self.func_loading_icon:
-            return self.func_loading_icon[func_name]
-        return None
+        return self.func_loading_icons.get(func_name, [])
 
 
-    def _async_wrapper(self, func, loadering_icon):
+    def _func_wrapper(self, func, loadering_icons):
         '''
         
         '''
-        if loadering_icon:
+        for loadering_icon in loadering_icons:
             loadering_icon.is_running = True
         
         try:
             func(self) 
         finally:
-            if loadering_icon:
+            for loadering_icon in loadering_icons:
                 loadering_icon.is_running = False
+
+            print('FUNCTION ENDS')
 
 
 if __name__ == '__main__':
