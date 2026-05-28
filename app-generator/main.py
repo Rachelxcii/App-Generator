@@ -76,15 +76,19 @@ class App:
                 if task == "SHUTDOWN":
                     self.task_queue.task_done()
                     break
-
-                screen_id, func_name, func, hooks = task
-                #print(f'FUNCTION: {func_name} FROM SCREEN: {screen_id}')
+                
+                # Saving all parameter of the task
+                screen_id = task['screen_id']
+                func_name = task['func_name']
+                func = task['func']
+                inputs = task['inputs']
+                hooks = task['hooks']
                 
                 for hook in hooks:
                     hook.is_running = True    
                 
                 try:
-                    func(screen_id)
+                    func(screen_id, inputs)
                 finally:
                     for hook in hooks:
                         hook.is_running = False

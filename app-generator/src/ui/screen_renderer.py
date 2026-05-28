@@ -107,11 +107,12 @@ class Screen:
         '''
         if event.type == pygame.QUIT:
             return 'exit'
-        
+
         for element in self.controls:
             response = element.handle_events(event)
             
             if response:
+                print(f'RESPONSE: {response}')
                 return self._process_element_response(response)
                     
         return None
@@ -140,14 +141,30 @@ class Screen:
             func = internal_check or external_check
         
             if callable(func):
-                # Adding function and its hooks to the worker thread
+                # Adding function, its inputs and hooks to the worker thread
+                inputs = self._collect_inputs(response.get('inputs', []))
                 hooks = self._get_hooks_for_func(func_name)
-                self.shared_tasks.put((self.screen_id, func_name, func, hooks))
+                #self.shared_tasks.put((self.screen_id, func_name, func, hooks))
+                new_task = {'screen_id': self.screen_id, 
+                            'func_name': func_name, 
+                            'func': func, 
+                            'inputs': inputs,
+                            'hooks': hooks}
+                self.shared_tasks.put(new_task)
 
             else:
                 print(f'ERROR: Function "{func_name}" not found.')
 
         return response.get('redirection')
+    
+
+    def _collect_inputs(self, input_ids: list) -> dict:
+        collected_values = {}
+        for element in self.controls:
+            if getattr(element, 'id', None) in input_ids:
+                if element.text != element.placeholder:
+                    collected_values[element.id] = element.text
+        return collected_values
     
 
     def _get_hooks_for_func(self, func_name):

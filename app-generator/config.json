@@ -91,7 +91,7 @@
                 "subtype": "text",
                 "position" : {"x": 275, "y": 250},
                 "size": {"width": 150, "height": 150},
-                "text": "USELESS",
+                "text": "RXCII",
                 "font": "sml_button",
                 "color": {"base": "thistle", "hover": "aubergine"},
                 "redirection": "",
@@ -149,6 +149,18 @@
                 "size": {"width": 50, "height": 50},
                 "tint_color": "thistle"
             },
+            "read_user_prompt_button": {
+                "type": "button",
+                "subtype": "text",
+                "position" : {"x": 550, "y": 300},
+                "size": {"width": 150, "height": 150},
+                "text": "READER",
+                "font": "sml_button",
+                "color": {"base": "thistle", "hover": "aubergine"},
+                "redirection": "",
+                "functions": ["read_prompt"],
+                "inputs": ["user_input_prompt"]
+            },
             "user_input_prompt": {
                 "type": "text_input",
                 "position": {"x": 100, "y": 200},
@@ -173,48 +185,15 @@
                 "font": "sml_button",
                 "color": {"base": "thistle", "hover": "aubergine"},
                 "redirection": "",
-                "functions": ["timer"]
-            },
-            "loading_timer_icon": {
-                "type": "loading_icon",
-                "monitored_function": "timer",
-                "position": {"x": 275, "y": 300},
-                "size": {"width": 50, "height": 50},
-                "image_or_gif": "browse_activity.png"
-            },
-            "loading_timer_gif_1": {
-                "type": "loading_icon",
-                "monitored_function": "timer",
-                "position": {"x": 350, "y": 300},
-                "size": {"width": 50, "height": 50},
-                "rotation": true,
-                "image_or_gif": "browse_activity.png"
+                "functions": ["sleep_timer"]
             },
             "loading_timer_gif_2": {
                 "type": "loading_icon",
-                "monitored_function": "timer",
+                "monitored_function": "sleep_timer",
                 "position": {"x": 425, "y": 300},
                 "size": {"width": 50, "height": 50},
                 "rotation": true,
                 "image_or_gif": "loading_transparent.gif"
-            },
-            "monitor_icon":{
-                "type": "image",
-                "file": "browse_activity.png",
-                "position": {"x": 275, "y": 350},
-                "size": {"width": 50, "height": 50},
-                "tint_color": "thistle"
-            },
-            "timer_button_2": {
-                "type": "button",
-                "subtype": "text",
-                "position" : {"x": 550, "y": 300},
-                "size": {"width": 150, "height": 150},
-                "text": "TIMER",
-                "font": "sml_button",
-                "color": {"base": "thistle", "hover": "aubergine"},
-                "redirection": "",
-                "functions": ["timer"]
             }
         }
     }

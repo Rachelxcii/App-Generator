@@ -33,14 +33,16 @@ class Button:
                                and functional data for this button.
         '''
         self.subtype = button_cfg['subtype']
+        self.id = button_cfg['id']
 
         x = button_cfg['position']['x']
         y = button_cfg['position']['y']
         self.width = button_cfg['size']['width']
         self.height = button_cfg['size']['height']
 
-        self.redirection = button_cfg['redirection']
-        self.functions = button_cfg['functions']
+        self.redirection = button_cfg.get('redirection', '')
+        self.functions = button_cfg.get('functions', '')
+        self.inputs = button_cfg.get('inputs', '')
 
         self.rect = pygame.Rect(x, y, self.width, self.height)
         self._subtype_attr_loader(display_cfg=display_cfg, button_cfg=button_cfg)
@@ -136,9 +138,16 @@ class Button:
                 - "redirection" (str/None): ID of the screen to navigate to.
                 - "functions" (list/str): Identifier(s) of logic to execute.
         '''
+        dict_ga = {
+            "redirection": self.redirection,
+            "functions": self.functions,
+            "inputs": self.inputs
+        }
+        print(f'GET ACTION: {dict_ga}')
         return {
             "redirection": self.redirection,
-            "functions": self.functions
+            "functions": self.functions,
+            "inputs": self.inputs
         }
     
 
@@ -204,6 +213,8 @@ class Image:
             display_cfg (dict): Global config containing asset paths.
             image_cfg (dict): Specific config with filename and coordinates.
         '''
+        self.id = image_cfg['id']
+
         path_dir = display_cfg['paths']['images']
         self.path_image = path_dir / image_cfg['file']
         self.size = image_cfg.get('size', '')
@@ -275,6 +286,8 @@ class Text:
                 text_cfg (dict): Specific dictionary defining the text content,
                                  position, font key and color key.
             '''
+            self.id = text_cfg['id']
+            
             self.text = text_cfg['text']
             self.x = text_cfg['position']['x']
             self.y = text_cfg['position']['y']
@@ -343,6 +356,8 @@ class TextInput:
         '''
         Initializes the Input field with styling and positioning.
         '''
+        self.id = text_input_cfg['id']
+
         self.text_input_cfg = text_input_cfg
         self.rect = pygame.Rect(text_input_cfg['position']['x'], 
                                 text_input_cfg['position']['y'], 
@@ -483,6 +498,8 @@ class LoadingIcon:
         external_functions_registry from screen_renderer.py
 
         '''
+        self.id = loading_icon_cfg['id']
+
         self.x = loading_icon_cfg['position']['x']
         self.y = loading_icon_cfg['position']['y']
         self.width = loading_icon_cfg['size']['width']

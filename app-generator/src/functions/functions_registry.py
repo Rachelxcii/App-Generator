@@ -3,7 +3,8 @@ import src.functions.external_functions
 
 
 internal_functions_registry = {
-    'timer': src.functions.internal_functions.sleep_timer
+    'sleep_timer': src.functions.internal_functions.sleep_timer,
+    'read_prompt': src.functions.internal_functions.read_prompt
 }
 
 external_functions_registry = {

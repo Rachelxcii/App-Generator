@@ -1,17 +1,15 @@
 import time
 
-'''
-app_functions_registry = {
-    "reset": src.ui.app_functions.reset_maze,
-    "save": src.ui.app_functions.save_data,
-    "exit": src.ui.app_functions.custom_exit
-}
-'''
+# --- REMEMBER: ADD ALL FUNCTIONS IN FUNCTION REGISTRY ---
 
-def sleep_timer(screen_instance):
+def sleep_timer(screen_instance, inputs):
     print('TIMER ACTIVATED')
-    time.sleep(2)
-    print('HAN PASADO 2 SECS')
+    time.sleep(3)
+    print('HAN PASADO 3 SECS')
+
+
+def read_prompt(screen_instance, inputs):
+    print(f'READING: {inputs}')
 
 
 
