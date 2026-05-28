@@ -34,7 +34,67 @@ class App:
         self.display_cfg = self.config['display']
         self.display_cfg['paths'] = self.paths
         self.display_cfg['fonts'] = fonts_loader(display_cfg=self.config['display'])
+
         self.screens_cfg = {k: v for k, v in self.config.items() if k.endswith("_screen")}
+
+        # Tasks manager (for Thread-Safe)
+        self.task_queue = queue.Queue()
+        self.running = True
+        self.closing_mode = False
+        
+        # Only one worker thread
+        self.worker_thread = threading.Thread(target=self._worker_loop, 
+                                              daemon=True)
+        self.worker_thread.start()
+
+        # Initialize base display
+        pygame.init()
+        self.display = pygame.display.set_mode((self.display_cfg['width'], 
+                                                self.display_cfg['height']))
+        pygame.display.set_caption("My App Framework")
+
+        # Dictionary containing instantiated screen objects mapped by their ID
+        self.screens = screens_loader(display_cfg=self.display_cfg, 
+                                      screens_cfg=self.screens_cfg,
+                                      shared_tasks=self.task_queue)
+        
+        # Set the starting point for the state machine
+        self.current_state = self.display_cfg['init_screen']
+
+        # Frame rate controller
+        self.clock = pygame.time.Clock()
+
+
+    def _worker_loop(self):
+        '''
+        This loop runs perpetually in the background thread.
+        '''
+        while self.running:
+            try:
+                task = self.task_queue.get(timeout=0.5)
+
+                if task == "SHUTDOWN":
+                    self.task_queue.task_done()
+                    break
+
+                screen_id, func_name, func, hooks = task
+                #print(f'FUNCTION: {func_name} FROM SCREEN: {screen_id}')
+                
+                for hook in hooks:
+                    hook.is_running = True    
+                
+                try:
+                    func(screen_id)
+                finally:
+                    for hook in hooks:
+                        hook.is_running = False
+                    
+                    self.task_queue.task_done()
+
+            except queue.Empty:
+                continue
+            except Exception as e:
+                print(f"--- WORKER ERROR CRÍTICO: {e} ---")
 
 
     def run(self):
@@ -51,35 +111,61 @@ class App:
             - Renders the active screen at the defined FPS.
         '''
 
-        # Initialize base display
-        pygame.init()
-        display = pygame.display.set_mode((self.display_cfg['width'], 
-                                           self.display_cfg['height']))
-
-        # Set the starting point for the state machine
-        current_state = self.display_cfg['init_screen']
-
-        # Dictionary containing instantiated screen objects mapped by their ID
-        screens = screens_loader(display_cfg=self.display_cfg, screens_cfg=self.screens_cfg)
-
-        # Frame rate controller
-        clock = pygame.time.Clock()
-
         # --- MAIN APPLICATION LOOP ---
-        while current_state != 'exit':
-
-            active_screen = screens[current_state]
+        while True: # self.current_state != 'exit' or self.closing_mode:
             
-            for event in pygame.event.get():
-                new_state = active_screen.handle_events(event)
-                if new_state:
-                    current_state = new_state
+            # Checks definitive exit
+            if self.closing_mode and not self.worker_thread.is_alive():
+                print("--- APP: THREAD FINISHED, CLOSING PROCESS ---")
+                break
 
-            active_screen.draw(display)
+            active_screen = self.screens[self.current_state] # Dict: screen_name: Screen()
+            #print(f'ACTIVE SCREEN: {active_screen}')
+            #print(f'CURR STATE: {self.current_state}')
+            #print(f'SCREENS: {self.screens}')
+
+            # Events manager
+            for event in pygame.event.get():
+
+                if event.type == pygame.QUIT:
+                    self._initiate_shutdown()
+
+                if not self.closing_mode:  # TO-DO: Solo procesamos eventos si no estamos cerrando
+                    new_state = active_screen.handle_events(event)
+                    if new_state == 'exit':
+                        self._initiate_shutdown()
+                    elif new_state:
+                        self.current_state = new_state
+
+            # Render
+            active_screen.draw(self.display)
             pygame.display.flip()
-            clock.tick(self.display_cfg['fps'])
+            self.clock.tick(self.display_cfg['fps'])
 
         pygame.quit()
+        sys.exit()
+
+
+    def _initiate_shutdown(self):
+        '''
+        Prepares app for a controlled shutdown TO-DO: revision gramatica
+        '''
+        if not self.closing_mode:
+            print("--- INITIATING CONTROLLED SHUTDOWN ---")
+            self.closing_mode = True
+            
+            # Informar a la pantalla actual para que dibuje el "CLOSING THE APP"
+            self.screens[self.current_state].is_closing = True
+            
+            # Limpiar cola y enviar señal de parada
+            try:
+                while not self.task_queue.empty():
+                    self.task_queue.get_nowait()
+                    self.task_queue.task_done()
+            except queue.Empty:
+                pass
+            
+            self.task_queue.put("SHUTDOWN")
 
 
 if __name__ == '__main__':

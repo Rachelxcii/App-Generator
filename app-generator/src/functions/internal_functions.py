@@ -10,7 +10,8 @@ app_functions_registry = {
 
 def sleep_timer(screen_instance):
     print('TIMER ACTIVATED')
-    time.sleep(5)
+    time.sleep(2)
+    print('HAN PASADO 2 SECS')
 
 
 
