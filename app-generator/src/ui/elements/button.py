@@ -1,5 +1,6 @@
 import pygame
 from typing import Optional
+from src.ui.elements.image import Image
 
 
 def buttons_loader(display_cfg: dict, buttons_cfg: dict) -> list:
@@ -48,8 +49,9 @@ class Button:
             button_cfg (dict): Specific dictionary with position, size, subtype 
                                and functional data for this button.
         '''
-        self.subtype = button_cfg['subtype']
         self.id = button_cfg['id']
+        self.subtype = button_cfg['subtype']
+        self.display_cfg = display_cfg
 
         x = button_cfg['position']['x']
         y = button_cfg['position']['y']
@@ -80,7 +82,29 @@ class Button:
             self._transform_text()
             
         elif self.subtype == 'image':
-            images_path = display_cfg['paths']['images']
+            tint_color = button_cfg.get('tint_color', {})
+
+            img_base_cfg = {'id': 'base', 
+                            'type': 'image', 
+                            'file': button_cfg['image']['base'],
+                            'position': button_cfg['position'],
+                            'size': button_cfg['size'],
+                            'tint_color': tint_color.get('base')}
+            
+            img_hover_cfg = {'id': 'hover', 
+                            'type': 'image', 
+                            'file': button_cfg['image']['hover'],
+                            'position': button_cfg['position'],
+                            'size': button_cfg['size'],
+                            'tint_color': tint_color.get('hover')}
+
+            self.img_base =  Image(display_cfg=self.display_cfg, 
+                                   image_cfg=img_base_cfg)
+            self.img_hover = Image(display_cfg=self.display_cfg, 
+                                   image_cfg=img_hover_cfg)
+
+
+            '''images_path = display_cfg['paths']['images']
             base_path = images_path / button_cfg['image']['base']
             hover_path = images_path / button_cfg['image']['hover']
 
@@ -92,7 +116,7 @@ class Button:
             self.img_hover = pygame.transform.smoothscale(raw_img_hover, 
                                                           self.rect.size)
 
-            self._apply_tints(display_cfg=display_cfg, button_cfg=button_cfg)
+            self._apply_tints(display_cfg=display_cfg, button_cfg=button_cfg)'''
 
 
     def _transform_text(self):
@@ -112,37 +136,6 @@ class Button:
             self.text_surface = raw_text
 
         self.text_rect = self.text_surface.get_rect(center=self.rect.center)
-
-
-    def _apply_tints(self, display_cfg: dict, button_cfg: dict):
-        '''
-        Applies a color tint to the image while preserving transparency.
-        '''
-        tint_cfg = button_cfg.get("tint_color")
-        
-        if tint_cfg.get('base'):
-            color = display_cfg['colors'].get(tint_cfg['base'])
-            self.img_base = self._execute_tint(surface=self.img_base, 
-                                               color=color)
-
-        if tint_cfg.get('hover'):
-            color = display_cfg['colors'].get(tint_cfg['hover'])
-            self.img_hover = self._execute_tint(surface=self.img_hover,
-                                               color=color)
-
-
-    def _execute_tint(self, surface: pygame.Surface, color: tuple) -> pygame.Surface:
-        '''
-        Helper to multiply a surface by a color.
-        '''
-        tint_surf = pygame.Surface((self.width, self.height)).convert_alpha()
-        tint_surf.fill(color)
-        
-        result_img = surface.copy()
-        flags = pygame.BLEND_RGBA_MULT
-        result_img.blit(tint_surf, (0, 0), special_flags=flags)
-
-        return result_img
 
     
     def get_actions(self) -> dict:
@@ -204,5 +197,8 @@ class Button:
             screen.blit(self.text_surface, self.text_rect)
 
         elif self.subtype == 'image':
-            img = self.img_hover if is_hovering else self.img_base
-            screen.blit(img, self.rect)
+        
+            if is_hovering:
+                self.img_hover.draw(screen)
+            else:
+                self.img_base.draw(screen)

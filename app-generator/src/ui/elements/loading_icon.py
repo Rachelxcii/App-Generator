@@ -1,5 +1,6 @@
 import pygame
 from typing import Optional
+from src.ui.elements.image import Image
 
 
 def loading_icons_loader(display_cfg: dict, loading_icons_cfg: dict, 

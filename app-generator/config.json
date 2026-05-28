@@ -117,7 +117,7 @@
             }
         }
     },
-
+    
     "secondary_screen": {
         "ID": "SECONDARY-SCREEN",
         "elements": {
