@@ -140,6 +140,9 @@ class Screen:
             if func_name == 'exit':
                 return 'exit'
             
+            if func_name == 'cancel_pending_tasks':
+                return 'cancel_pending_tasks'
+            
             internal_check = self.internal_registry.get(func_name)
             external_check = self.external_registry.get(func_name)
             func = internal_check or external_check

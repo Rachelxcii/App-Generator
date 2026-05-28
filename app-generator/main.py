@@ -39,6 +39,7 @@ class App:
         self.task_queue = queue.Queue()
         self.running = True
         self.closing_mode = False
+        self.await_all_tasks = self.display_cfg['await_all_tasks']
         
         # Only one worker thread
         self.worker_thread = threading.Thread(target=self._worker_loop, 
@@ -122,9 +123,6 @@ class App:
                 break
 
             active_screen = self.screens[self.current_state] # Dict: screen_name: Screen()
-            #print(f'ACTIVE SCREEN: {active_screen}')
-            #print(f'CURR STATE: {self.current_state}')
-            #print(f'SCREENS: {self.screens}')
 
             # Events manager
             for event in pygame.event.get():
@@ -136,6 +134,8 @@ class App:
                     new_state = active_screen.handle_events(event)
                     if new_state == 'exit':
                         self._initiate_shutdown()
+                    elif new_state == 'cancel_pending_tasks':
+                        self._cancel_pending_tasks()
                     elif new_state:
                         self.current_state = new_state
 
@@ -160,14 +160,19 @@ class App:
             self.screens[self.current_state].is_closing = True
             
             # Limpiar cola y enviar señal de parada
-            try:
-                while not self.task_queue.empty():
-                    self.task_queue.get_nowait()
-                    self.task_queue.task_done()
-            except queue.Empty:
-                pass
+            if not self.await_all_tasks:
+                self._cancel_pending_tasks()
             
             self.task_queue.put("SHUTDOWN")
+
+    
+    def _cancel_pending_tasks(self):
+        try:
+            while not self.task_queue.empty():
+                self.task_queue.get_nowait()
+                self.task_queue.task_done()
+        except queue.Empty:
+            pass
 
 
 if __name__ == '__main__':

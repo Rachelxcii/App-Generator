@@ -44,7 +44,7 @@ class LoadingIcon:
         self.pos = (self.x, self.y)
         self.monitored_func_name = loading_icon_cfg.get('monitored_function')
         path_dir = display_cfg['paths']['images']
-        self.path_image = path_dir / loading_icon_cfg['image_or_gif']
+        self.path_image = path_dir / loading_icon_cfg['file']
 
         self.func = loading_icon_cfg['monitored_function']
         self.is_running = False

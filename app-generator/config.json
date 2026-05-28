@@ -14,6 +14,7 @@
         "height": 500,
         "fps": 60,
         "init_screen": "MAIN-SCREEN",
+        "await_all_tasks": true,
         "colors": {
             "background": [28, 27, 27],
             "button_base": [67, 64, 57],
@@ -149,22 +150,10 @@
                 "size": {"width": 50, "height": 50},
                 "tint_color": "thistle"
             },
-            "read_user_prompt_button": {
-                "type": "button",
-                "subtype": "text",
-                "position" : {"x": 550, "y": 300},
-                "size": {"width": 150, "height": 150},
-                "text": "READER",
-                "font": "sml_button",
-                "color": {"base": "thistle", "hover": "aubergine"},
-                "redirection": "",
-                "functions": ["read_prompt"],
-                "inputs": ["user_input_prompt"]
-            },
             "user_input_prompt": {
                 "type": "text_input",
-                "position": {"x": 100, "y": 200},
-                "size": {"width": 500, "height": 50},
+                "position": {"x": 100, "y": 175},
+                "size": {"width": 550, "height": 50},
                 "font": "default",
                 "placeholder": "Pega aquí tu texto para procesar...",
                 "max_chars": 100,
@@ -176,10 +165,22 @@
                     "text": "parchment"
                 }
             },
+            "read_user_prompt_button": {
+                "type": "button",
+                "subtype": "text",
+                "position" : {"x": 300, "y": 250},
+                "size": {"width": 150, "height": 150},
+                "text": "READER",
+                "font": "sml_button",
+                "color": {"base": "thistle", "hover": "aubergine"},
+                "redirection": "",
+                "functions": ["read_prompt"],
+                "inputs": ["user_input_prompt"]
+            },
             "timer_button": {
                 "type": "button",
                 "subtype": "text",
-                "position" : {"x": 100, "y": 300},
+                "position" : {"x": 100, "y": 250},
                 "size": {"width": 150, "height": 150},
                 "text": "TIMER",
                 "font": "sml_button",
@@ -187,13 +188,24 @@
                 "redirection": "",
                 "functions": ["sleep_timer"]
             },
-            "loading_timer_gif_2": {
+            "loading_timer": {
                 "type": "loading_icon",
                 "monitored_function": "sleep_timer",
-                "position": {"x": 425, "y": 300},
+                "position": {"x": 150, "y": 450},
                 "size": {"width": 50, "height": 50},
                 "rotation": true,
-                "image_or_gif": "loading_transparent.gif"
+                "file": "loading_transparent.gif"
+            },
+            "cancel_tasks_button": {
+                "type": "button",
+                "subtype": "text",
+                "position" : {"x": 500, "y": 250},
+                "size": {"width": 150, "height": 150},
+                "text": "CANCEL TASKS",
+                "font": "sml_button",
+                "color": {"base": "thistle", "hover": "aubergine"},
+                "redirection": "",
+                "functions": ["cancel_pending_tasks"]
             }
         }
     }
