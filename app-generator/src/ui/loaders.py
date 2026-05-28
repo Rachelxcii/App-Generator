@@ -1,7 +1,12 @@
 import pygame
 from collections import defaultdict
 
-from src.ui.elements import Button, Image, Text, TextInput, LoadingIcon
+from src.ui.elements.button import buttons_loader
+from src.ui.elements.image import images_loader
+from src.ui.elements.loading_icon import loading_icons_loader
+from src.ui.elements.text import texts_loader
+from src.ui.elements.text_input import text_inputs_loader
+
 
 
 def element_detector(display_cfg: dict, elements_cfg: dict, funcs_registry: dict) -> list:
@@ -56,55 +61,12 @@ def element_detector(display_cfg: dict, elements_cfg: dict, funcs_registry: dict
     return elements
     
     
-def buttons_loader(display_cfg: dict, buttons_cfg: dict) -> list:
-    '''
-    Parses button configuration data to instantiate UI Button objects.
-
-    Args:
-        display_cfg (dict): Global display and asset settings.
-        buttons_cfg (dict): Nested dictionary containing buttons configuration.
-
-    Returns:
-        list: A collection of initialized Button instances.
-    '''
-    buttons = []
-    for button_cfg in buttons_cfg:
-        buttons.append(Button(display_cfg=display_cfg, button_cfg=button_cfg))
-    return buttons
 
 
-def images_loader(display_cfg: dict, images_cfg: dict) -> list:
-    '''
-    Parses image configuration data to instantiate UI Image objects.
-
-    Args:
-        display_cfg (dict): Global display and asset settings.
-        images_cfg (dict): Nested dictionary containing images configuration.
-
-    Returns:
-        list: A collection of initialized Text instances.
-    '''
-    images = []
-    for image_cfg in images_cfg:
-        images.append(Image(display_cfg=display_cfg, image_cfg=image_cfg))
-    return images
 
 
-def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
-    '''
-    Parses text configuration data to instantiate UI Text objects.
 
-    Args:
-        display_cfg (dict): Global display and asset settings.
-        texts_cfg (dict): Nested dictionary containing texts configuration.
 
-    Returns:
-        list: A collection of initialized Text instances.
-    '''
-    texts = []
-    for text_cfg in texts_cfg:
-        texts.append(Text(display_cfg=display_cfg, text_cfg=text_cfg))
-    return texts
 
 
 def fonts_loader(display_cfg: dict) -> dict:
@@ -130,43 +92,9 @@ def fonts_loader(display_cfg: dict) -> dict:
     return fonts
 
 
-def text_inputs_loader(display_cfg: dict, text_inputs_cfg: dict) -> list:
-    '''
-    Parses text configuration data to instantiate UI Text objects.
-
-    Args:
-        display_cfg (dict): Global display and asset settings.
-        text_inputs (dict): Nested dictionary containing text inputs 
-                            configuration.
-
-    Returns:
-        list: A collection of initialized TextInput instances.
-    '''
-    text_inputs = []
-    for text_input_cfg in text_inputs_cfg:
-        text_inputs.append(TextInput(display_cfg=display_cfg, 
-                                     text_input_cfg=text_input_cfg))
-    return text_inputs
 
 
-def loading_icons_loader(display_cfg: dict, loading_icons_cfg: dict, 
-                         funcs_registry: dict) -> list:
-    '''
-    Parses configuration data to instantiate UI Loading Icon objects.
 
-    Args:
-        display_cfg (dict): Global display and asset settings.
-        text_inputs (dict): Nested dictionary containing loading icons
-                            configuration.
-
-    Returns:
-        list: A collection of initialized TextInput instances.
-    '''
-    loading_icons = []
-    for loading_icon_cfg in loading_icons_cfg:
-        loading_icons.append(LoadingIcon(display_cfg=display_cfg,
-                                         loading_icon_cfg=loading_icon_cfg))
-    return loading_icons
 
 
 if __name__ == '__main__':

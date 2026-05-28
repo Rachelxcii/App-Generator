@@ -11,10 +11,8 @@ from src.utils.path_loader import AppPaths
 
 # --- TO-DO LIST ---
 # TO-DO: pre-sets functions like: save CSV, reset, exit, etc. (internal_functions.py)
-# TO-DO: move "app_functions_registry" from screen_renderer.py to internal_functions.py ('in')
-# TO-DO: move "app_functions_registry" from screen_renderer.py to external_functions.py ('ex')
-# TO-DO: unify "app_functions_registry" from 'in' and 'ex' in screen_renderer.py
 # TO-DO: tests to check the entire config JSON
+# TO-DO: 
 
 class App:
 
