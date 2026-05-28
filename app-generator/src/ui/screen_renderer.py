@@ -1,4 +1,5 @@
 import pygame
+import queue
 import threading
 from typing import Optional
 from collections import defaultdict
@@ -65,14 +66,21 @@ class Screen:
                                          elements_cfg=self.elements_cfg,
                                          funcs_registry = funcs_registry)
 
+        # Controls: Elements that user can interact with
         ctrl_types = {Button, TextInput}
         self.controls = [el for el in self.elements if type(el) in ctrl_types]
 
-
-        self.func_loading_icons = defaultdict(list)
+        self.functions_hooks = defaultdict(list)
+        hook_types = {LoadingIcon}
         for el in self.elements:
-            if isinstance(el, LoadingIcon):
-                self.func_loading_icons[el.func].append(el)
+            if type(el) in hook_types:
+                self.functions_hooks[el.func].append(el)
+
+        # Tasks manager
+        self.task_queue = queue.Queue()
+
+        self.worker = threading.Thread(target=self._worker_loop, daemon=True)
+        self.worker.start()
 
 
     def draw(self, screen) -> None:
@@ -119,6 +127,7 @@ class Screen:
             str | None: The redirection target if present, else None.
         '''
         functions = response.get('functions', [])
+
         for func_name in functions:
             if not func_name: continue
             
@@ -131,42 +140,49 @@ class Screen:
             func = internal_check or external_check
         
             if callable(func):
-                loadering_icons = self._get_loading_icons_for_func(func_name)
-                
-                thread = threading.Thread(
-                    target=self._func_wrapper, 
-                    args=(func, loadering_icons)
-                )
-                # Daemon = False, to ensure thread block the app until ends.
-                thread.daemon = False 
-                thread.start()
+                hooks = self._get_hooks_for_func(func_name)
+
+                self.task_queue.put((func, hooks, func_name))
+
+                print('--- TASK ADDED ---')
+                print(f'TASKS QUEUE: {self.task_queue}')
+
             else:
                 print(f'ERROR: Function "{func_name}" not found.')
 
         return response.get('redirection')
     
 
-    def _get_loading_icons_for_func(self, func_name):
+    def _get_hooks_for_func(self, func_name):
         '''
         
         '''
-        return self.func_loading_icons.get(func_name, [])
+        return self.functions_hooks.get(func_name, [])
 
 
-    def _func_wrapper(self, func, loadering_icons):
+    def _worker_loop(self):
         '''
-        
+        This loop runs perpetually in the background thread.
         '''
-        for loadering_icon in loadering_icons:
-            loadering_icon.is_running = True
-        
-        try:
-            func(self) 
-        finally:
-            for loadering_icon in loadering_icons:
-                loadering_icon.is_running = False
+        while True:
 
-            print('FUNCTION ENDS')
+            func, hooks, func_name = self.task_queue.get()
+            
+            print(f'--- STARTING: {func_name} ---')
+            for hook in hooks:
+                hook.is_running = True    
+            
+            try:
+                func(self)
+
+            finally:
+                for hook in hooks:
+                    hook.is_running = False
+                
+                self.task_queue.task_done()
+
+                print('--- TASK DONE ---')
+                print(f'TASKS QUEUE: {self.task_queue}')
 
 
 if __name__ == '__main__':
