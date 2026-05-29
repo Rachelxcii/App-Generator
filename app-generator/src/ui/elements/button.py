@@ -1,5 +1,7 @@
 import pygame
 from typing import Optional
+from collections import defaultdict
+
 from src.ui.elements.image import Image
 
 
@@ -82,44 +84,34 @@ class Button:
             self._transform_text()
             
         elif self.subtype == 'image':
-            tint_color = button_cfg.get('tint_color', {})
-            rotation = button_cfg.get('rotation', {})
-
-            img_base_cfg = {'id': 'base', 
-                            'type': 'image', 
-                            'file': button_cfg['file']['base'],
-                            'position': button_cfg['position'],
-                            'size': button_cfg['size'],
-                            'tint_color': tint_color.get('base'),
-                            'rotation': rotation.get('base')}
-            
-            img_hover_cfg = {'id': 'hover', 
-                            'type': 'image', 
-                            'file': button_cfg['file']['hover'],
-                            'position': button_cfg['position'],
-                            'size': button_cfg['size'],
-                            'tint_color': tint_color.get('hover'),
-                            'rotation': rotation.get('hover')}
+            img_base_cfg = self._get_image_cfg(button_cfg=button_cfg,
+                                               mode_key='base')
+            img_hover_cfg = self._get_image_cfg(button_cfg=button_cfg,
+                                               mode_key='hover')
 
             self.img_base =  Image(display_cfg=self.display_cfg, 
                                    image_cfg=img_base_cfg)
             self.img_hover = Image(display_cfg=self.display_cfg, 
                                    image_cfg=img_hover_cfg)
+            
+    
+    def _get_image_cfg(self, button_cfg: dict, mode_key: str):
+        ''' img_type: base or hover '''
+        image_cfg = {}
 
+        for param_key in button_cfg.keys():
+            param = button_cfg.get(param_key)
+            if isinstance(param, dict):
+                subparam = param.get(mode_key, None)
+                if subparam is not None:
+                    image_cfg[param_key] = subparam
+                    continue
 
-            '''images_path = display_cfg['paths']['images']
-            base_path = images_path / button_cfg['image']['base']
-            hover_path = images_path / button_cfg['image']['hover']
+            image_cfg[param_key] = param
 
-            raw_img_base = pygame.image.load(base_path).convert_alpha()
-            raw_img_hover = pygame.image.load(hover_path).convert_alpha()
+        image_cfg['id'] = image_cfg['id'] + '_' + mode_key
 
-            self.img_base = pygame.transform.smoothscale(raw_img_base, 
-                                                        self.rect.size)
-            self.img_hover = pygame.transform.smoothscale(raw_img_hover, 
-                                                          self.rect.size)
-
-            self._apply_tints(display_cfg=display_cfg, button_cfg=button_cfg)'''
+        return image_cfg
 
 
     def _transform_text(self):
