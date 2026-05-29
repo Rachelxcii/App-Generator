@@ -83,20 +83,23 @@ class Button:
             
         elif self.subtype == 'image':
             tint_color = button_cfg.get('tint_color', {})
+            rotation = button_cfg.get('rotation', {})
 
             img_base_cfg = {'id': 'base', 
                             'type': 'image', 
-                            'file': button_cfg['image']['base'],
+                            'file': button_cfg['file']['base'],
                             'position': button_cfg['position'],
                             'size': button_cfg['size'],
-                            'tint_color': tint_color.get('base')}
+                            'tint_color': tint_color.get('base'),
+                            'rotation': rotation.get('base')}
             
             img_hover_cfg = {'id': 'hover', 
                             'type': 'image', 
-                            'file': button_cfg['image']['hover'],
+                            'file': button_cfg['file']['hover'],
                             'position': button_cfg['position'],
                             'size': button_cfg['size'],
-                            'tint_color': tint_color.get('hover')}
+                            'tint_color': tint_color.get('hover'),
+                            'rotation': rotation.get('hover')}
 
             self.img_base =  Image(display_cfg=self.display_cfg, 
                                    image_cfg=img_base_cfg)
