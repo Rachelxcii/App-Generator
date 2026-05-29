@@ -45,12 +45,15 @@ class Image:
         path_dir = display_cfg['paths']['images']
         self.path_image = path_dir / image_cfg['file']
         self.size = image_cfg.get('size', '')
-        x = image_cfg['position']['x']
-        y = image_cfg['position']['y']
+        self.x = image_cfg['position']['x']
+        self.y = image_cfg['position']['y']
         self.width = self.size['width']
         self.height = self.size['height']
 
-        self.rect = pygame.Rect(x, y, self.width, self.height)
+        self.rotation = image_cfg.get('rotation')
+        self.angle = 0
+
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         self.raw_img = pygame.image.load(str(self.path_image)).convert_alpha()
         self.raw_img = pygame.transform.smoothscale(self.raw_img, 
@@ -86,4 +89,16 @@ class Image:
         Returns:
             None
         '''
-        screen.blit(self.curr_img, self.rect)
+        #screen.blit(self.curr_img, self.rect)
+
+        if self.rotation:
+            self.angle = (self.angle - 5) % 360
+            center_x = self.x + self.width // 2
+            center_y = self.y + self.height // 2
+            
+            rotated_image = pygame.transform.rotate(self.curr_img, self.angle)
+            rect = rotated_image.get_rect(center=(center_x, center_y))
+            screen.blit(rotated_image, rect.topleft)
+
+        else:
+            screen.blit(self.curr_img, self.rect)

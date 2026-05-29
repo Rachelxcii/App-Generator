@@ -36,45 +36,28 @@ class LoadingIcon:
 
         '''
         self.id = loading_icon_cfg['id']
-
-        self.x = loading_icon_cfg['position']['x']
-        self.y = loading_icon_cfg['position']['y']
-        self.width = loading_icon_cfg['size']['width']
-        self.height = loading_icon_cfg['size']['height']
-        self.pos = (self.x, self.y)
-        self.monitored_func_name = loading_icon_cfg.get('monitored_function')
-        path_dir = display_cfg['paths']['images']
-        self.path_image = path_dir / loading_icon_cfg['file']
+        self.display_cfg = display_cfg
+        self.loading_icon_cfg = loading_icon_cfg
 
         self.func = loading_icon_cfg['monitored_function']
         self.is_running = False
-        self.rotation = loading_icon_cfg.get('rotation')
-        self.angle = 0
 
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self._load_image(display_cfg=display_cfg,
+                         loading_icon_cfg=loading_icon_cfg)
 
-        self.raw_img = pygame.image.load(str(self.path_image)).convert_alpha()
-        self.raw_img = pygame.transform.smoothscale(self.raw_img, 
-                                                    (self.width, self.height))
+
+    def _load_image(self, display_cfg: dict, loading_icon_cfg: dict):
+
+        image_cfg = {'id': loading_icon_cfg['id'], 
+                     'type': 'image', 
+                     'file': loading_icon_cfg['file'],
+                     'position': loading_icon_cfg['position'],
+                     'size': loading_icon_cfg['size'],
+                     'tint_color': loading_icon_cfg.get('tint_color', {}),
+                     'rotation': loading_icon_cfg.get('rotation', False)}
         
-        self.curr_img = self.raw_img.copy()
-        tint_color = loading_icon_cfg.get('tint_color')
-
-        if tint_color:
-            target_rgb = display_cfg['colors'].get(tint_color, (255, 255, 255))
-            self._tint_image(target_rgb)
-
-
-    def _tint_image(self, rgb_color: tuple):
-        '''
-        Applies a color tint to the image while preserving transparency.
-        '''
-        tint_surf = pygame.Surface((self.width, self.height)).convert_alpha()
-        tint_surf.fill(rgb_color)
-        
-        self.curr_img = self.raw_img.copy()
-        flags = pygame.BLEND_RGBA_MULT
-        self.curr_img.blit(tint_surf, (0, 0), special_flags=flags)
+        self.image =  Image(display_cfg=display_cfg, 
+                            image_cfg=image_cfg)
 
 
     def draw(self, screen: pygame.Surface) -> None:
@@ -88,14 +71,4 @@ class LoadingIcon:
             None
         '''
         if self.is_running:
-            if self.rotation:
-                self.angle = (self.angle - 5) % 360
-                center_x = self.x + self.width // 2
-                center_y = self.y + self.height // 2
-                
-                rotated_image = pygame.transform.rotate(self.curr_img, self.angle)
-                rect = rotated_image.get_rect(center=(center_x, center_y))
-                screen.blit(rotated_image, rect.topleft)
-
-            else:
-                screen.blit(self.curr_img, self.rect)
+            self.image.draw(screen)

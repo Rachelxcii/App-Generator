@@ -143,13 +143,6 @@
                 "font": "title_secondary_screen",
                 "color": "title_txt"
             },
-            "logo_image":{
-                "type": "image",
-                "file": "rachelxcii_logo.png",
-                "position" : {"x": 325, "y": 425},
-                "size": {"width": 50, "height": 50},
-                "tint_color": "thistle"
-            },
             "user_input_prompt": {
                 "type": "text_input",
                 "position": {"x": 100, "y": 175},
@@ -191,10 +184,17 @@
             "loading_timer": {
                 "type": "loading_icon",
                 "monitored_function": "sleep_timer",
-                "position": {"x": 150, "y": 450},
+                "position": {"x": 150, "y": 350},
                 "size": {"width": 50, "height": 50},
                 "rotation": true,
                 "file": "loading_transparent.gif"
+            },
+            "logo_image":{
+                "type": "image",
+                "file": "rachelxcii_logo.png",
+                "position" : {"x": 325, "y": 425},
+                "size": {"width": 50, "height": 50},
+                "tint_color": "thistle"
             },
             "cancel_tasks_button": {
                 "type": "button",
