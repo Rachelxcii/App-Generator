@@ -47,17 +47,9 @@ class LoadingIcon:
 
 
     def _load_image(self, display_cfg: dict, loading_icon_cfg: dict):
-
-        image_cfg = {'id': loading_icon_cfg['id'], 
-                     'type': 'image', 
-                     'file': loading_icon_cfg['file'],
-                     'position': loading_icon_cfg['position'],
-                     'size': loading_icon_cfg['size'],
-                     'tint_color': loading_icon_cfg.get('tint_color', {}),
-                     'rotation': loading_icon_cfg.get('rotation', False)}
         
         self.image =  Image(display_cfg=display_cfg, 
-                            image_cfg=image_cfg)
+                            image_cfg=loading_icon_cfg)
 
 
     def draw(self, screen: pygame.Surface) -> None:

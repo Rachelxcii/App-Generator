@@ -16,7 +16,7 @@ class AppPaths:
     """
     Manages the application's filesystem structure and asset resolution.
     """
-    def __init__(self, root_name: str = "App-Generator"):
+    def __init__(self, root_name: str = "app-generator"):
         self.base_dir = get_base_path()
         self.assets_dir = self.base_dir / root_name / "assets"
         self.images = self.assets_dir / "images"
