@@ -100,7 +100,6 @@ class Image:
         Returns:
             None
         '''
-        #screen.blit(self.curr_img, self.rect)
 
         if self.rotation:
             self.angle = (self.angle - 5) % 360
