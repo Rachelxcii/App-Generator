@@ -1,6 +1,12 @@
 # 🚀 Data-Driven UI Engine for Pygame
 
+[![Python Version](https://img.shields.io/badge/python-3.14-blue)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Pygame](https://img.shields.io/badge/pygame-2.6.0+-green)](https://www.pygame.org/)
+
 A lightweight, asynchronous UI framework for Pygame that enables dynamic interface generation via JSON-based declarative schemas and decoupled process management.
+
+---
 
 ## 🛠 System Architecture
 
@@ -10,7 +16,10 @@ The application layout and behavior are defined through a hierarchical JSON sche
 - **Function Injection:** Supports external function registration mapped dynamically. The engine recognizes these through an internal registry, allowing for full extensibility.
 
 ### 2. Concurrency Management: The Worker Thread
-To prevent heavy processes (statistical calculations, disk/network access) from blocking the main UI thread (60 FPS), this framework implements a concurrency model based on a FIFO Queue.
+To prevent heavy processes (statistical calculations, disk/network access) from blocking the main UI thread (60 FPS), this framework implements a concurrency model based on a **FIFO Queue**.
+
+
+
 - **Separation of Concerns:** The main thread handles rendering and event capture exclusively, while the **Worker Thread** processes business logic.
 - **Race Condition Prevention:** By centralizing external function execution in a single worker thread via a queue, memory access conflicts are eliminated, ensuring a linear and predictable execution flow.
 - **True Asynchrony:** Users can continue interacting with the app or queue new tasks while the Worker processes previous ones.
@@ -28,31 +37,19 @@ The engine uses specialized loaders for each component, maximizing reusability t
 ## 📈 Engineering Value
 This framework addresses the historical limitation of Pygame (its single-threaded nature), transforming it into an engine capable of handling complex data-processing applications with a fluid, professional UI.
 
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Python 3.10+
-- Pygame 2.6.0+
+- **Python 3.14**
+- **Pygame 2.6.1+**
 
 ### Installation
 ```bash
-pip install -r app-generator/requirements.txt
-```
-
-### Running the App
-```bash
-python app-generator/main.py
-```
-
-### Running Tests
-```bash
-pytest
-
-
-
-
-
-
+git clone [https://github.com/Rachelxcii/App-Generator.git](https://github.com/Rachelxcii/App-Generator.git)
+cd App-Generator
+pip install -r requirements.txt
 # App-Generator
 
 If you want to attached external assets use the following folders:
