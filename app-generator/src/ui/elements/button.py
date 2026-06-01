@@ -68,9 +68,12 @@ class Button:
         self._subtype_attr_loader(display_cfg=display_cfg, button_cfg=button_cfg)
 
 
-    def _subtype_attr_loader(self, display_cfg: dict, button_cfg: dict):
+    def _subtype_attr_loader(self, display_cfg: dict, button_cfg: dict) -> None:
         '''
         Loads mandatory attributes depending on the subtype button.
+
+        Returns:
+            None
         '''
         fonts = display_cfg['fonts']
         colors = display_cfg['colors']
@@ -95,8 +98,14 @@ class Button:
                                    image_cfg=img_hover_cfg)
             
     
-    def _get_image_cfg(self, button_cfg: dict, mode_key: str):
-        ''' img_type: base or hover '''
+    def _get_image_cfg(self, button_cfg: dict, mode_key: str) -> dict:
+        '''
+        Extracts and merges visual parameters for a specific button state.
+        Button state must be: base or hover.
+
+        Returns:
+            dict: Specific configuration depending on the button state.
+        '''
         image_cfg = {}
 
         for param_key in button_cfg.keys():
@@ -114,9 +123,12 @@ class Button:
         return image_cfg
 
 
-    def _transform_text(self):
+    def _transform_text(self) -> None:
         '''
         Transforms text to fit the button size.
+
+        Returns:
+            None
         '''
         raw_text = self.font.render(self.text, True, (255, 255, 255))
     
@@ -137,10 +149,12 @@ class Button:
         '''
         Returns a dict with infomation about what MUST happen if a button is 
         clicked.
+
         Returns:
             dict: A collection of action triggers containing:
                 - "redirection" (str/None): ID of the screen to navigate to.
                 - "functions" (list/str): Identifier(s) of logic to execute.
+                - "inputs" (list/str): Identifier(s) of required inputs.
         '''
         dict_ga = {
             "redirection": self.redirection,
