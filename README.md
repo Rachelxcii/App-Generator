@@ -1,8 +1,8 @@
 # 🚀 Data-Driven UI Engine for Pygame
 
 [![Python Version](https://img.shields.io/badge/python-3.14-blue)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Pygame](https://img.shields.io/badge/pygame-2.6.0+-green)](https://www.pygame.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A lightweight, asynchronous UI framework for Pygame that enables dynamic interface generation via JSON-based declarative schemas and decoupled process management.
 
