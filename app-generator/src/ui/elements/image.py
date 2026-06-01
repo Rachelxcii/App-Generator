@@ -21,24 +21,31 @@ def images_loader(display_cfg: dict, images_cfg: dict) -> list:
 
 class Image:
     '''
-    A class to represent and render a static image in Pygame.
+    Represents and manages a static or animated (rotating) image element.
+
+    This class handles asset loading, surface optimization, color tinting, 
+    and real-time transformation logic for the UI.
 
     Attributes:
-        path_image:
-        image (pygame.Surface): The optimized image surface.
-        size:
-        width:
-        height:
-        rect (pygame.Rect): The rectangular area of the image for positioning.
+        id (str): Unique identifier for the element.
+        path_image (Path): Absolute path to the image asset.
+        size (dict): Original size constraints from configuration.
+        rect (pygame.Rect): Collision and positioning area.
+        raw_img (pygame.Surface): The base optimized surface (original colors).
+        curr_img (pygame.Surface): The processed surface (tinted or modified).
+        rotation (bool): Whether the image should rotate over time.
+        angle (int): Current rotation angle in degrees.
     '''
 
     def __init__(self, display_cfg: dict, image_cfg: dict):
         '''
-        Initializes the Image object by loading and optimizing the file.
+        Initializes the Image object by loading, scaling, and tinting the asset.
 
         Args:
-            display_cfg (dict): Global config containing asset paths.
-            image_cfg (dict): Specific config with filename and coordinates.
+            display_cfg (dict): Global display settings containing paths and 
+                                color palettes.
+            image_cfg (dict): Specific element configuration 
+                              (file, position, size, tint).
         '''
         self.id = image_cfg['id']
 
@@ -69,7 +76,10 @@ class Image:
 
     def _tint_image(self, rgb_color: tuple):
         '''
-        Applies a color tint to the image while preserving transparency.
+        Applies a color multiply tint to the surface while preserving alpha channels.
+
+        Args:
+            rgb_color (tuple): RGB values used for the color multiplication.
         '''
         tint_surf = pygame.Surface((self.width, self.height)).convert_alpha()
         tint_surf.fill(rgb_color)
@@ -81,7 +91,8 @@ class Image:
 
     def draw(self, screen: pygame.Surface) -> None:
         '''
-        Loads and renders the image to the destination surface.
+        Renders the image onto the destination surface.
+        Handling rotation if enabled.
         
         Args:
             screen (pygame.Surface): Surface where text will be blitted.
