@@ -8,7 +8,6 @@ from src.ui.elements.text import texts_loader
 from src.ui.elements.text_input import text_inputs_loader
 
 
-
 def element_detector(display_cfg: dict, elements_cfg: dict, funcs_registry: dict) -> list:
     '''
     Identifies and instantiates UI objects from elements configuration.
@@ -60,14 +59,6 @@ def element_detector(display_cfg: dict, elements_cfg: dict, funcs_registry: dict
     
     return elements
     
-    
-
-
-
-
-
-
-
 
 def fonts_loader(display_cfg: dict) -> dict:
     '''
@@ -90,11 +81,6 @@ def fonts_loader(display_cfg: dict) -> dict:
         fonts[key] = pygame.font.Font(str(path), data['size'])
         
     return fonts
-
-
-
-
-
 
 
 if __name__ == '__main__':
