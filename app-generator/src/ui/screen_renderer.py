@@ -6,9 +6,7 @@ from collections import defaultdict
 from src.ui.loaders import element_detector
 
 from src.ui.elements.button import Button
-from src.ui.elements.image import Image
 from src.ui.elements.loading_icon import LoadingIcon
-from src.ui.elements.text import Text
 from src.ui.elements.text_input import TextInput
 
 from src.functions.functions_registry import (internal_functions_registry, 

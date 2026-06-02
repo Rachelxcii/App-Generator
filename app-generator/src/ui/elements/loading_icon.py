@@ -1,5 +1,5 @@
 import pygame
-from typing import Optional
+
 from src.ui.elements.image import Image
 
 
@@ -57,7 +57,7 @@ class LoadingIcon:
                          loading_icon_cfg=loading_icon_cfg)
 
 
-    def _load_image(self, display_cfg: dict, loading_icon_cfg: dict):
+    def _load_image(self, display_cfg: dict, loading_icon_cfg: dict) -> None:
         '''
         Composition step: Creates an Image instance to handle rendering logic.
         '''

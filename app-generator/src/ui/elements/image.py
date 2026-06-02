@@ -1,5 +1,4 @@
 import pygame
-from typing import Optional
 
 
 def images_loader(display_cfg: dict, images_cfg: dict) -> list:
@@ -96,10 +95,9 @@ class Image:
         Renders the image onto the destination surface.
         Handling rotation if enabled.
         
-        Args:
+        Args: 
             screen (pygame.Surface): Surface where text will be blitted.
         '''
-
         if self.rotation:
             self.angle = (self.angle - 5) % 360
             center_x = self.x + self.width // 2

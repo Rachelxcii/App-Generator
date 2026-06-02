@@ -65,9 +65,10 @@ def element_detector(
 
     if loading_icons_cfg:
         # LoadingIcons require funcs_registry to monitor Worker Thread state
-        loading_icons = loading_icons_loader(display_cfg=display_cfg, 
-                                             loading_icons_cfg=loading_icons_cfg,
-                                             funcs_registry=funcs_registry)
+        loading_icons = loading_icons_loader(
+            display_cfg=display_cfg,
+            loading_icons_cfg=loading_icons_cfg,
+            funcs_registry=funcs_registry)
         elements += loading_icons
     
     return elements

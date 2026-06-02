@@ -84,7 +84,7 @@ class TextInput:
             self.color_placeholder if self.showing_placeholder 
             else self.color_text
             )
-        display_text = self.text if self.text != "" else " "
+        display_text = self.text if self.text != '' else ' '
         self.text_surface = self.font.render(display_text, True, color)
         
 
@@ -103,11 +103,11 @@ class TextInput:
                 if self.showing_placeholder:
                     # If it's the first time the user clicks inside the box, 
                     # the placeholder is still visible.
-                    self.text = ""
+                    self.text = ''
                     self.showing_placeholder = False
                     self._update_surface()
             else:
-                if self.text == "":
+                if self.text == '':
                     # If user clicks outside the box and there is no text,
                     # the placeholder is restored.
                     self.text = self.placeholder
@@ -125,7 +125,7 @@ class TextInput:
                 if not self.showing_placeholder and len(self.text) > 0:
                     self.text = self.text[:-1]
 
-                    if self.text == "":
+                    if self.text == '':
                         self.text = self.placeholder
                         self.showing_placeholder = True
                     
@@ -133,7 +133,7 @@ class TextInput:
 
             elif event.key == pygame.K_RETURN:
                 if self.text_input_cfg.get('allow_multiline', False):
-                    self.text += "\n"
+                    self.text += '\n'
                     self._update_surface()
                 else:
                     self.active = False
@@ -141,10 +141,10 @@ class TextInput:
                     pygame.key.stop_text_input()
 
             else:
-                if event.unicode.isprintable() and event.unicode != "":
+                if event.unicode.isprintable() and event.unicode != '':
 
                     if self.showing_placeholder:
-                        self.text = ""
+                        self.text = ''
                         self.showing_placeholder = False
                     
                     if len(self.text) < self.text_input_cfg.get(

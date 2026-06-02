@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+
 def get_base_path():
     '''
     Determines the root directory of the application at runtime.
@@ -37,7 +38,6 @@ class AppPaths:
         config (Path): Path to the JSON-based UI schemas.
     '''
 
-
     def __init__(self, root_name: str = 'app-generator'):
         '''
         Initializes the path tree based on the detected base directory.
@@ -68,4 +68,3 @@ class AppPaths:
             'images': self.images,
             'fonts': self.fonts
         }
-    

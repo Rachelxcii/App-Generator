@@ -1,6 +1,5 @@
 import pygame
 from typing import Optional
-from collections import defaultdict
 
 from src.ui.elements.image import Image
 
@@ -148,20 +147,20 @@ class Button:
 
         Returns:
             dict: A collection of action triggers containing:
-                - "redirection" (str/None): ID of the screen to navigate to.
-                - "functions" (list/str): Identifier(s) of logic to execute.
-                - "inputs" (list/str): Identifier(s) of required inputs.
+                - 'redirection' (str/None): ID of the screen to navigate to.
+                - 'functions' (list/str): Identifier(s) of logic to execute.
+                - 'inputs' (list/str): Identifier(s) of required inputs.
         '''
         dict_ga = {
-            "redirection": self.redirection,
-            "functions": self.functions,
-            "inputs": self.inputs
+            'redirection': self.redirection,
+            'functions': self.functions,
+            'inputs': self.inputs
         }
         print(f'GET ACTION: {dict_ga}')
         return {
-            "redirection": self.redirection,
-            "functions": self.functions,
-            "inputs": self.inputs
+            'redirection': self.redirection,
+            'functions': self.functions,
+            'inputs': self.inputs
         }
     
 

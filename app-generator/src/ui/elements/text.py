@@ -58,7 +58,7 @@ class Text:
             self.size_cfg = display_cfg.get('size', '')
             self._prepare_surface()
         
-        
+
         def _prepare_surface(self) -> None:
             '''
             Generates the optimized text surface.
