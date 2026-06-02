@@ -50,7 +50,7 @@ class LoadingIcon:
         '''
         self.id = loading_icon_cfg['id']
 
-        self.func = loading_icon_cfg['monitored_function']
+        self.monitored_functions = loading_icon_cfg.get('monitored_functions')
         self.is_running = False
 
         self._load_image(display_cfg=display_cfg,

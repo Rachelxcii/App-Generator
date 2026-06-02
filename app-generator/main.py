@@ -37,6 +37,7 @@ class App:
 
         # Tasks manager (for Thread-Safe)
         self.task_queue = queue.Queue()
+        self.result_queue = queue.Queue()
         self.running = True
         self.closing_mode = False
         self.await_all_tasks = self.display_cfg['await_all_tasks']
@@ -84,10 +85,19 @@ class App:
                 hooks = task['hooks']
                 
                 for hook in hooks:
-                    hook.is_running = True    
+                    hook.is_running = True
                 
                 try:
-                    func(screen_id, inputs)
+                    result = func(screen_id, inputs)
+                    response = {
+                        'screen_id': screen_id,
+                        'func_name': func_name,
+                        'result': result
+                    }
+                    print(f'MAIN RESPONSE: {response}')
+
+                    self.result_queue.put(response)
+
                 finally:
                     for hook in hooks:
                         hook.is_running = False
@@ -98,6 +108,26 @@ class App:
                 continue
             except Exception as e:
                 print(f"--- WORKER ERROR CRÍTICO: {e} ---")
+
+
+    def check_worker_results(self):
+        '''
+        
+        '''
+        try:
+            while not self.result_queue.empty():
+                response = self.result_queue.get_nowait()
+                
+                screen_id = response['screen_id']
+                func_name = response['func_name']
+                result = response['result']
+                
+                if screen_id in self.screens:
+                    self.screens[screen_id].resolve_output(func_name=func_name,
+                                                           result=result)
+                self.result_queue.task_done()
+        except queue.Empty:
+            pass
 
 
     def run(self):
@@ -123,6 +153,7 @@ class App:
                 break
 
             active_screen = self.screens[self.current_state] # Dict: screen_name: Screen()
+            self.check_worker_results()
 
             # Events manager
             for event in pygame.event.get():

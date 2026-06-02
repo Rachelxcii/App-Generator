@@ -146,7 +146,7 @@
             },
             "user_input_prompt": {
                 "type": "text_input",
-                "position": {"x": 100, "y": 175},
+                "position": {"x": 100, "y": 150},
                 "size": {"width": 550, "height": 50},
                 "font": "default",
                 "placeholder": "Pega aquí tu texto para procesar...",
@@ -158,6 +158,16 @@
                     "active": "parchment",
                     "text": "parchment"
                 }
+            },
+            "output_prompt": {
+                "type": "text_output",
+                "subtype": "text",
+                "position": {"x": 100, "y": 200},
+                "size": {"width": 550, "height": 50},
+                "font": "default",
+                "color": "thistle",
+                "initial_text": "fff",
+                "monitored_functions": ["sleep_timer", "read_prompt"]
             },
             "read_user_prompt_button": {
                 "type": "button",
@@ -180,11 +190,12 @@
                 "font": "sml_button",
                 "color": {"base": "thistle", "hover": "aubergine"},
                 "redirection": "",
-                "functions": ["sleep_timer"]
+                "functions": ["sleep_timer"],
+                "outputs": ["output_prompt"]
             },
             "loading_timer": {
                 "type": "loading_icon",
-                "monitored_function": "sleep_timer",
+                "monitored_functions": ["sleep_timer"],
                 "position": {"x": 150, "y": 350},
                 "size": {"width": 50, "height": 50},
                 "rotation": true,

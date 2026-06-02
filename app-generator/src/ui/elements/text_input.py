@@ -115,7 +115,7 @@ class TextInput:
                     self._update_surface()
 
             self.color_curr = (self.color_active if self.active
-                               else self.color_passive)            
+                               else self.color_passive)
 
         # --- KEYBOARD INPUT LOGIC ---
         if self.active and event.type == pygame.KEYDOWN:

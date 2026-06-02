@@ -63,6 +63,7 @@ class Button:
         self.redirection = button_cfg.get('redirection', '')
         self.functions = button_cfg.get('functions', '')
         self.inputs = button_cfg.get('inputs', '')
+        self.outputs = button_cfg.get('outputs', '')
 
         self.rect = pygame.Rect(x, y, self.width, self.height)
         self._subtype_attr_loader()
@@ -151,16 +152,11 @@ class Button:
                 - 'functions' (list/str): Identifier(s) of logic to execute.
                 - 'inputs' (list/str): Identifier(s) of required inputs.
         '''
-        dict_ga = {
-            'redirection': self.redirection,
-            'functions': self.functions,
-            'inputs': self.inputs
-        }
-        print(f'GET ACTION: {dict_ga}')
         return {
             'redirection': self.redirection,
             'functions': self.functions,
-            'inputs': self.inputs
+            'inputs': self.inputs,
+            'outputs': self.outputs
         }
     
 

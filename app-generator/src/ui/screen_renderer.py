@@ -8,6 +8,7 @@ from src.ui.loaders import element_detector
 from src.ui.elements.button import Button
 from src.ui.elements.loading_icon import LoadingIcon
 from src.ui.elements.text_input import TextInput
+from src.ui.elements.text_output import TextOutput
 
 from src.functions.functions_registry import (internal_functions_registry, 
                                               external_functions_registry)
@@ -69,8 +70,6 @@ class Screen:
         '''
         self.internal_registry = internal_functions_registry
         self.external_registry = external_functions_registry
-        funcs_registry = self.internal_registry | self.external_registry
-        print(type(funcs_registry))
         self.func_from_registry_is_running = False
 
         self.screen_id = screen_id
@@ -82,19 +81,30 @@ class Screen:
         self.fonts = display_cfg['fonts']
 
         self.elements = element_detector(display_cfg=self.display_cfg,
-                                         elements_cfg=self.elements_cfg,
-                                         funcs_registry = funcs_registry)
+                                         elements_cfg=self.elements_cfg)
 
         # Controls: Elements that user can interact with
         ctrl_types = {Button, TextInput}
-        self.controls = [el for el in self.elements if type(el) in ctrl_types]
+        self.ctrl_els = [el for el in self.elements if type(el) in ctrl_types]
 
         # Hooks
         self.functions_hooks = defaultdict(list)
         hook_types = {LoadingIcon}
         for el in self.elements:
             if type(el) in hook_types:
-                self.functions_hooks[el.func].append(el)
+                for func_name in el.monitored_functions:
+                    self.functions_hooks[func_name].append(el)
+
+        # Outputs: Elements that user can use to show the results
+        self.out_hooks = defaultdict(list)
+        out_types = {TextOutput}
+        for el in self.elements:
+            if type(el) in out_types:
+                for func_name in el.monitored_functions:
+                    self.out_hooks[func_name].append(el)
+        
+        print(f'--- FUNCS HOOKS: {self.functions_hooks}')
+        print(f'--- FUNCS OUTPUTS: {self.out_hooks}')
 
         # Shared tasks queue
         self.shared_tasks = shared_tasks
@@ -128,7 +138,7 @@ class Screen:
         if event.type == pygame.QUIT:
             return 'exit'
 
-        for element in self.controls:
+        for element in self.ctrl_els:
             response = element.handle_events(event)
             
             if response:
@@ -152,6 +162,7 @@ class Screen:
         functions = response.get('functions', [])
 
         for func_name in functions:
+            
             if not func_name: continue
             
             if func_name == 'exit':
@@ -165,10 +176,10 @@ class Screen:
             func = internal_check or external_check
         
             if callable(func):
+
                 # Adding function, its inputs and hooks to the worker thread
                 inputs = self._collect_inputs(response.get('inputs', []))
                 hooks = self._get_hooks_for_func(func_name)
-                #self.shared_tasks.put((self.screen_id, func_name, func, hooks))
                 new_task = {'screen_id': self.screen_id, 
                             'func_name': func_name, 
                             'func': func, 
@@ -193,7 +204,7 @@ class Screen:
             dict: Mapping of element IDs to their current text content.
         '''
         collected_values = {}
-        for element in self.controls:
+        for element in self.ctrl_els:
             if getattr(element, 'id', None) in input_ids:
                 if element.text != element.placeholder:
                     collected_values[element.id] = element.text
@@ -205,3 +216,24 @@ class Screen:
         Retrieves UI elements that need to react when a specific function runs.
         '''
         return self.functions_hooks.get(func_name, [])
+    
+
+    def _detect_outputs(self, output_ids: list) -> dict:
+        '''
+
+        '''
+        detected_outputs = {}
+        for element in self.out_hooks:
+            if getattr(element, 'id', None) in output_ids:
+                detected_outputs[element.id] = element
+        return detected_outputs
+    
+
+    def resolve_output(self, func_name: str, result: any) -> None:
+        '''
+        
+        '''
+        if func_name in self.out_hooks:
+            for element in self.out_hooks[func_name]:
+                element.update_content(result)
+
