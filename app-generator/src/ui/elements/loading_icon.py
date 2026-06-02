@@ -3,8 +3,7 @@ from typing import Optional
 from src.ui.elements.image import Image
 
 
-def loading_icons_loader(display_cfg: dict, loading_icons_cfg: dict, 
-                         funcs_registry: dict) -> list:
+def loading_icons_loader(display_cfg: dict, loading_icons_cfg: dict) -> list:
     '''
     Parses configuration data to instantiate UI Loading Icon objects.
 
@@ -25,19 +24,31 @@ def loading_icons_loader(display_cfg: dict, loading_icons_cfg: dict,
 
 class LoadingIcon:
     '''
-    WIP
+    A reactive UI component that visualizes background process activity.
+
+    This class acts as a "monitor" for specific functions running in the Worker 
+    Thread. It remains invisible or static until the monitored function is 
+    active, at which point it triggers its internal animation 
+    (typically rotation).
+
+    Attributes:
+        id (str): Unique identifier for the icon.
+        display_cfg (dict): Global configuration for paths and colors.
+        loading_icon_cfg (dict): Specific configuration.
+        func (str): The name of the registered function this icon is tracking.
+        is_running (bool): State flag synced with the "func" execution status.
+        image (Image): The underlying Image instance handling the pixels.
     '''
 
     def __init__(self, display_cfg: dict, loading_icon_cfg: dict):
         '''
+        Initializes the LoadingIcon and links it to a monitored process.
 
-        functions_registry: internal_functions_registry and 
-        external_functions_registry from screen_renderer.py
-
+        Args:
+            display_cfg (dict): Global configuration dictionary.
+            loading_icon_cfg (dict): Component-specific settings from JSON.
         '''
         self.id = loading_icon_cfg['id']
-        self.display_cfg = display_cfg
-        self.loading_icon_cfg = loading_icon_cfg
 
         self.func = loading_icon_cfg['monitored_function']
         self.is_running = False
@@ -47,20 +58,23 @@ class LoadingIcon:
 
 
     def _load_image(self, display_cfg: dict, loading_icon_cfg: dict):
-        
+        '''
+        Composition step: Creates an Image instance to handle rendering logic.
+        '''
         self.image =  Image(display_cfg=display_cfg, 
                             image_cfg=loading_icon_cfg)
 
 
     def draw(self, screen: pygame.Surface) -> None:
         '''
-        Loads and renders the image to the destination surface.
+        Renders the loading animation if the monitored function is currently 
+        executing.
         
-        Args:
-            screen (pygame.Surface): Surface where text will be blitted.
+        The actual rotation logic is encapsulated within the self.image.draw() 
+        method, assuming the 'rotation' flag was set in the JSON configuration.
 
-        Returns:
-            None
+        Args:
+            screen (pygame.Surface): The target surface for rendering.
         '''
         if self.is_running:
             self.image.draw(screen)
