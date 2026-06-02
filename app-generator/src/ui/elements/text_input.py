@@ -3,7 +3,7 @@ import pygame
 
 def text_inputs_loader(display_cfg: dict, text_inputs_cfg: dict) -> list:
     '''
-    Parses text configuration data to instantiate UI Text objects.
+    Parses text configuration data to instantiate UI TextInput objects.
 
     Args:
         display_cfg (dict): Global display and asset settings.

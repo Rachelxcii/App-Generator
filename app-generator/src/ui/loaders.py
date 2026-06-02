@@ -6,6 +6,7 @@ from src.ui.elements.image import images_loader
 from src.ui.elements.loading_icon import loading_icons_loader
 from src.ui.elements.text import texts_loader
 from src.ui.elements.text_input import text_inputs_loader
+from src.ui.elements.text_output import text_outputs_loader
 
 
 def element_detector(
@@ -40,6 +41,7 @@ def element_detector(
     images_cfg = categories.get('image', '')
     texts_cfg = categories.get('text', '')
     text_inputs_cfg = categories.get('text_input', '')
+    text_outputs_cfg = categories.get('text_output', '')
     loading_icons_cfg = categories.get('loading_icon', '')
 
     elements = []
@@ -63,12 +65,18 @@ def element_detector(
                                          text_inputs_cfg=text_inputs_cfg)
         elements += text_inputs
 
+    if text_outputs_cfg:
+        text_outputs = text_outputs_loader(display_cfg=display_cfg, 
+                                           text_outputs_cfg=text_outputs_cfg)
+        elements += text_outputs
+
     if loading_icons_cfg:
         # LoadingIcons require funcs_registry to monitor Worker Thread state
         loading_icons = loading_icons_loader(
             display_cfg=display_cfg,
             loading_icons_cfg=loading_icons_cfg,
-            funcs_registry=funcs_registry)
+            #funcs_registry=funcs_registry
+            )
         elements += loading_icons
     
     return elements

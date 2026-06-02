@@ -70,6 +70,7 @@ class Screen:
         self.internal_registry = internal_functions_registry
         self.external_registry = external_functions_registry
         funcs_registry = self.internal_registry | self.external_registry
+        print(type(funcs_registry))
         self.func_from_registry_is_running = False
 
         self.screen_id = screen_id
