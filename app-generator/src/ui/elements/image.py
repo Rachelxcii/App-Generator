@@ -39,7 +39,8 @@ class Image:
 
     def __init__(self, display_cfg: dict, image_cfg: dict):
         '''
-        Initializes the Image object by loading, scaling, and tinting the asset.
+        Initializes the Image object by loading, scaling, and tinting the 
+        asset.
 
         Args:
             display_cfg (dict): Global display settings containing paths and 
@@ -74,9 +75,10 @@ class Image:
             self._tint_image(target_rgb)
 
 
-    def _tint_image(self, rgb_color: tuple):
+    def _tint_image(self, rgb_color: tuple) -> None:
         '''
-        Applies a color multiply tint to the surface while preserving alpha channels.
+        Applies a color multiply tint to the surface while preserving alpha 
+        channels.
 
         Args:
             rgb_color (tuple): RGB values used for the color multiplication.
@@ -96,9 +98,6 @@ class Image:
         
         Args:
             screen (pygame.Surface): Surface where text will be blitted.
-
-        Returns:
-            None
         '''
 
         if self.rotation:
