@@ -1,5 +1,4 @@
 import pygame
-from typing import Optional
 
 
 def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
@@ -21,15 +20,20 @@ def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
 
 class Text:
         '''
-        A class to manage and render static or dynamic text elements within a 
-        Pygame surface.
+        Represents a UI text element with support for automatic scaling and 
+        positioning.
+
+        This class handles the conversion of raw strings into optimized Pygame 
+        surfaces. It includes logic to auto-fit text into a bounding box while 
+        maintaining aspect ratio if a target size is provided.
 
         Attributes:
-            text (str): The actual string content to be rendered.
-            pos_x (int): The target X-coordinate for placement.
-            pos_y (int): The target Y-coordinate for placement.
-            font (pygame.font.Font): The Pygame font object used for rendering.
-            color (tuple): RGB color tuple for the text surface.
+            id (str): Unique identifier for the element.
+            text (str): The string content to be rendered.
+            font (pygame.font.Font): The resolved font asset.
+            color (tuple): RGB color used for the typeface.
+            surface (pygame.Surface): Final rendered and scaled text surface.
+            draw_pos (tuple/pygame.Rect): The final blit coordinates or Rect.
         '''
 
         def __init__(self, display_cfg: dict, text_cfg: dict):
@@ -54,30 +58,44 @@ class Text:
             self.size_cfg = display_cfg.get('size', '')
             self._prepare_surface()
         
-        def _prepare_surface(self):
+        
+        def _prepare_surface(self) -> None:
             '''
-            Generates final text surface.
+            Generates the optimized text surface.
+
+            If a 'size' configuration is present, it calculates a scale factor 
+            to fit the text within a bounding box (90% padding) using 
+            smoothscale transformations.
+            Otherwise, it defaults to a standard blit.
             '''
+            # Initial high-quality render
             raw_surface = self.font.render(self.text, True, self.color)
 
             if self.size_cfg:
+                # Bounding box definition
                 width = self.size_cfg['width']
                 height = self.size_cfg['height']
                 self.rect = pygame.Rect(self.x, self.y, width, height)
                 center = self.rect.center
 
+                # Aspect Ratio Calculation:
+                # Ensures text fits within 90% of the box
                 ratio_w = (self.rect.width * 0.9) / raw_surface.get_width()
                 ratio_h = (self.rect.height * 0.9) / raw_surface.get_height()
                 scale_factor = min(ratio_w, ratio_h)
 
+                # Select the most restrictive ratio to avoid overflow
                 width = int(raw_surface.get_width() * scale_factor)
                 height = int(raw_surface.get_height() * scale_factor)
                 size = (width, height)
 
+                # Smooth transformation to avoid aliasing artifacts
                 self.surface = pygame.transform.smoothscale(raw_surface, size)
+                # Center the scaled surface within the original bounding box
                 self.draw_pos = self.surface.get_rect(center=center)
 
             else:
+                # Standard rendering without scaling constraints
                 self.surface = raw_surface
                 self.draw_pos = (self.x, self.y)
             
@@ -89,8 +107,5 @@ class Text:
 
             Args:
                 screen (pygame.Surface): Surface where text will be blitted.
-
-            Returns:
-                None
             '''
             screen.blit(self.surface, self.draw_pos)
