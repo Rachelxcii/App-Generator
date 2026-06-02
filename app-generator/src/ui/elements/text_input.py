@@ -1,5 +1,4 @@
 import pygame
-from typing import Optional
 
 
 def text_inputs_loader(display_cfg: dict, text_inputs_cfg: dict) -> list:
@@ -23,20 +22,26 @@ def text_inputs_loader(display_cfg: dict, text_inputs_cfg: dict) -> list:
 
 class TextInput:
     '''
-    Managed UI element for text entry, handling focus, keyboard input, and 
-    rendering.
-    
+    A reactive UI element for text entry, supporting focus management,
+    keyboard input handling, and dynamic text rendering.
+
     Attributes:
+        id (str): Unique identifier for the input field.
         text (str): The current string entered by the user.
-        active (bool): Whether the element is focused and capturing keystrokes.
-        rect (pygame.Rect): The collision and drawing area.
+        active (bool): Whether the element is focused and capturing input.
+        rect (pygame.Rect): The bounding box for collision and rendering.
         color_active (tuple): Border color when focused.
         color_passive (tuple): Border color when idle.
+        showing_placeholder (bool): State flag for placeholder visibility.
     '''
 
     def __init__(self, display_cfg: dict, text_input_cfg: dict):
         '''
         Initializes the Input field with styling and positioning.
+
+        Args:
+            display_cfg (dict): Global display/theme configuration.
+            text_input_cfg (dict): Specific configuration for this instance.
         '''
         self.id = text_input_cfg['id']
 
@@ -57,8 +62,12 @@ class TextInput:
         self.showing_placeholder = True
         
         #Colors
-        self.color_active = self.colors.get(text_input_cfg.get('active_color'), (255, 255, 255))
-        self.color_passive = self.colors.get(text_input_cfg.get('passive_color'), (100, 100, 100))
+        self.color_active = self.colors.get(
+            text_input_cfg.get('active_color'), (255, 255, 255)
+            )
+        self.color_passive = self.colors.get(
+            text_input_cfg.get('passive_color'), (100, 100, 100)
+            )
         self.color_curr = self.color_passive
         self.color_text = self.colors.get('text', (255, 255, 255))
         self.color_placeholder = (150, 150, 150)
@@ -69,20 +78,24 @@ class TextInput:
 
     def _update_surface(self):
         '''
-        Renders the text surface.
+        Renders the current text or placeholder to an optimized surface.
         '''
-        color = self.color_placeholder if self.showing_placeholder else self.color_text
+        color = (
+            self.color_placeholder if self.showing_placeholder 
+            else self.color_text
+            )
         display_text = self.text if self.text != "" else " "
         self.text_surface = self.font.render(display_text, True, color)
         
 
     def handle_events(self, event: pygame.event.Event) -> None:
         '''
-        Manages focus toggling and keyboard capture.
-        There are some comments to clarify how the code works.
+        Manages focus toggling via mouse and keyboard input processing.
+
+        Args:
+            event (pygame.event.Event): The current Pygame event to process.
         '''
         if event.type == pygame.MOUSEBUTTONDOWN:
-            was_active = self.active
             self.active = self.rect.collidepoint(event.pos)
             
             if self.active:
@@ -101,8 +114,10 @@ class TextInput:
                     self.showing_placeholder = True
                     self._update_surface()
 
-            self.color_curr = self.color_active if self.active else self.color_passive            
+            self.color_curr = (self.color_active if self.active
+                               else self.color_passive)            
 
+        # --- KEYBOARD INPUT LOGIC ---
         if self.active and event.type == pygame.KEYDOWN:
 
             if event.key == pygame.K_BACKSPACE:
@@ -116,7 +131,7 @@ class TextInput:
                     
                     self._update_surface()
 
-            elif event.key == pygame.K_RETURN: # TO-DO: Better multiline logic
+            elif event.key == pygame.K_RETURN:
                 if self.text_input_cfg.get('allow_multiline', False):
                     self.text += "\n"
                     self._update_surface()
@@ -129,12 +144,12 @@ class TextInput:
                 if event.unicode.isprintable() and event.unicode != "":
 
                     if self.showing_placeholder:
-                        # If the user starts to write, the placeholder is removed.
                         self.text = ""
                         self.showing_placeholder = False
                     
-                    if len(self.text) < self.text_input_cfg.get('max_chars', 1000): 
-                        # event.unicode to take the real char
+                    if len(self.text) < self.text_input_cfg.get(
+                        'max_chars', 1000
+                    ): 
                         self.text += event.unicode
             
             self._update_surface()
@@ -142,17 +157,21 @@ class TextInput:
 
     def draw(self, screen: pygame.Surface) -> None:
         '''
-        Renders the input box and the current text.
+        Renders the input box, applies clipping for overflow and 
+        draws the text.
+
+        Args:
+            screen (pygame.Surface): The display surface to draw on.
         '''
         # Draws the edges of the box
         pygame.draw.rect(screen, self.color_curr, self.rect, 2)
         
-        # Defines clip
+        # Applies clipping to ensure text doesn't bleed outside the box
         clip_rect = self.rect.inflate(-4, -4) 
         old_clip = screen.get_clip()
         screen.set_clip(clip_rect)
         
-        # Horizontal scroll logic, right alignment
+        # Horizontal scroll logic: align text to the right if it exceeds width
         text_width = self.text_surface.get_width()
         max_width = self.rect.width - 10
         
@@ -160,9 +179,10 @@ class TextInput:
         if text_width > max_width:
             offset_x = max_width - text_width
 
-        # Draws text
-        text_pos = (self.rect.x + 5 + offset_x, self.rect.centery - (self.text_surface.get_height() // 2))
+        # Draws text centered vertically with calculated offset
+        text_pos = (self.rect.x + 5 + offset_x,
+                    self.rect.centery - (self.text_surface.get_height() // 2))
         screen.blit(self.text_surface, text_pos)
         
-        # Restores original clip
+        # Restores original clipping area
         screen.set_clip(old_clip)
