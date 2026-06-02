@@ -8,23 +8,34 @@ from src.ui.elements.text import texts_loader
 from src.ui.elements.text_input import text_inputs_loader
 
 
-def element_detector(display_cfg: dict, elements_cfg: dict, funcs_registry: dict) -> list:
+def element_detector(
+        display_cfg: dict, elements_cfg: dict, funcs_registry: dict
+        ) -> list:
     '''
-    Identifies and instantiates UI objects from elements configuration.
+    Orchestrates the identification and instantiation of UI components from raw data.
+
+    This function acts as a central factory. It categorizes elements by type using 
+    a grouping strategy (defaultdict) and delegates instantiation to specialized 
+    loaders. This ensures that the main renderer receives a unified list of 
+    ready-to-draw objects.
 
     Args:
-        display_cfg (dict): Global display and asset settings.
-        elements_cfg (dict): Raw dict containing the config of UI elements.
+        display_cfg (dict): Global engine configuration (paths, colors, fonts).
+        elements_cfg (dict): Raw dictionary from JSON containing UI element schemas.
+        funcs_registry (dict): Dictionary mapping function names to executable logic 
+                               for interactive components (e.g., LoadingIcon).
 
     Returns:
-        list: A list of initialized UI component objects (Buttons, Texts ...).
+        list: A flattened list of initialized UI component instances.
     '''
+    # Group elements by type to process them with their specific loaders
     categories = defaultdict(list)
 
     for id, el_cfg in elements_cfg.items():
         el_cfg['id'] = id
         categories[el_cfg.get('type', 'unknown')].append(el_cfg)
 
+    # Extract specific configurations for batch loading
     buttons_cfg = categories.get('button', '')
     images_cfg = categories.get('image', '')
     texts_cfg = categories.get('text', '')
@@ -33,6 +44,7 @@ def element_detector(display_cfg: dict, elements_cfg: dict, funcs_registry: dict
 
     elements = []
 
+    # Batch processing via specialized loaders
     if buttons_cfg:
         buttons = buttons_loader(display_cfg=display_cfg, 
                                  buttons_cfg=buttons_cfg)
@@ -52,6 +64,7 @@ def element_detector(display_cfg: dict, elements_cfg: dict, funcs_registry: dict
         elements += text_inputs
 
     if loading_icons_cfg:
+        # LoadingIcons require funcs_registry to monitor Worker Thread state
         loading_icons = loading_icons_loader(display_cfg=display_cfg, 
                                              loading_icons_cfg=loading_icons_cfg,
                                              funcs_registry=funcs_registry)
@@ -63,15 +76,15 @@ def element_detector(display_cfg: dict, elements_cfg: dict, funcs_registry: dict
 def fonts_loader(display_cfg: dict) -> dict:
     '''
     Resolves filesystem paths and initializes Pygame font assets.
-    Configuration dictionary contains the 'fonts' key.
-    The 'fonts' is a mapping of font keys to file names and point sizes.
+
+    Parses the 'fonts' section of the configuration to map font keys to 
+    instantiated pygame.font.Font objects using the provided system paths.
 
     Args:
         display_cfg (dict): Global display and asset settings.
 
     Returns:
-        dict: A dictionary where keys match config and values are 
-              pygame.font.Font objects.
+        dict: Mapping of font identifiers (str) to pygame.font.Font objects.
     '''
     fonts_path = display_cfg['paths']['fonts']
 
@@ -81,7 +94,3 @@ def fonts_loader(display_cfg: dict) -> dict:
         fonts[key] = pygame.font.Font(str(path), data['size'])
         
     return fonts
-
-
-if __name__ == '__main__':
-    pass
