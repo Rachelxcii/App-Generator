@@ -15,7 +15,9 @@ from src.functions.functions_registry import (internal_functions_registry,
                                               external_functions_registry)
 
 
-def screens_loader(display_cfg: dict, screens_cfg: dict, shared_tasks: queue) -> dict:
+def screens_loader(
+        display_cfg: dict, screens_cfg: dict, shared_tasks: queue
+        ) -> dict:
     '''
     Initializes all application screens from configuration data.
 
@@ -37,24 +39,35 @@ def screens_loader(display_cfg: dict, screens_cfg: dict, shared_tasks: queue) ->
 
 class Screen:
     '''
-    Represents a single app state or menu, managing its own UI elements.
+    Manages a specific application state, UI lifecycle, and event delegation.
+
+    The Screen class orchestrates the interaction between data-driven UI 
+    elements and logic execution. It acts as a bridge between user input, 
+    the function registry, and the Worker Thread's task queue.
 
     Attributes:
+        screen_id (str): Unique identifier for the current state/menu.
         display_cfg (dict): Global display and asset settings.
-        screen_cfg (dict): Specific configuration for this screen instance.
-        elements_cfg (dict): Raw dict containing the config of UI elements.
-        colors (dict): Reference to the global color palette.
-        fonts (dict): Reference to the pre-loaded font objects.
-        elements (list): List of instantiated UI component objects: Buttons...
-        buttons (list): A filtered list containing only the Button objects for 
-                        event handling.
-        external_registry (dict): Mapping of string identifiers to 
-                                  Python functions.
+        screen_cfg (dict): Configuration schema for this specific screen.
+        elements (list): All UI components (visual and interactive).
+        controls (list): Subset of elements that capture user input.
+        functions_hooks (defaultdict): Mapping of function names to UI elements 
+                                       that react to their execution status.
+        shared_tasks (queue.Queue): Thread-safe queue for dispatching tasks 
+                                    to the Worker.
     '''
 
-    def __init__(self, screen_id: str, display_cfg: dict, screen_cfg: dict, shared_tasks: queue):
+    def __init__(self, screen_id: str, display_cfg: dict, screen_cfg: dict, 
+                 shared_tasks: queue):
         '''
-        Initializes the screen and its components from configuration.
+        Initializes the screen environment and instantiates its UI component 
+        tree.
+
+        Args:
+            screen_id (str): Name of the screen.
+            display_cfg (dict): Global configuration for styles and resources.
+            screen_cfg (dict): JSON-derived dictionary for screen elements.
+            shared_tasks (queue.Queue): Communication channel for the Worker Thread.
         '''
         self.internal_registry = internal_functions_registry
         self.external_registry = external_functions_registry
@@ -103,11 +116,15 @@ class Screen:
 
     def handle_events(self, event: pygame.event.Event) -> Optional[str]:
         '''
-        Processes user input and interactions for this specific screen.
+        Delegates Pygame events to interactive controls and processes 
+        responses.
 
         Args:
-            event (pygame.event.Event): The current event from the pygame 
-                                        event queue.
+            event (pygame.event.Event): Current event from the main loop.
+
+        Returns:
+            Optional[str]: Redirection target or command (e.g., 'exit') 
+                           if triggered.
         '''
         if event.type == pygame.QUIT:
             return 'exit'
@@ -124,13 +141,14 @@ class Screen:
 
     def _process_element_response(self, response: dict) -> Optional[str]:
         '''
-        Centralizes the logic for executing functions and handling redirections.
-        
+        Translates UI responses into executable actions or Worker Thread tasks.
+
         Args:
-            response (dict): Data returned by an interactive element's handle_events.
+            response (dict): Data payload from an element
+                             (functions, inputs, redirections).
             
         Returns:
-            str | None: The redirection target if present, else None.
+            Optional[str]: Redirection screen ID if requested by the element.
         '''
         functions = response.get('functions', [])
 
@@ -166,6 +184,15 @@ class Screen:
     
 
     def _collect_inputs(self, input_ids: list) -> dict:
+        '''
+        Gathers current values from specified UI input elements.
+
+        Args:
+            input_ids (list): IDs of the TextInputs to scrape data from.
+
+        Returns:
+            dict: Mapping of element IDs to their current text content.
+        '''
         collected_values = {}
         for element in self.controls:
             if getattr(element, 'id', None) in input_ids:
@@ -176,10 +203,6 @@ class Screen:
 
     def _get_hooks_for_func(self, func_name):
         '''
-        
+        Retrieves UI elements that need to react when a specific function runs.
         '''
         return self.functions_hooks.get(func_name, [])
-
-
-if __name__ == '__main__':
-    pass    
