@@ -54,6 +54,7 @@ class Button:
         self.id = button_cfg['id']
         self.subtype = button_cfg['subtype']
         self.display_cfg = display_cfg
+        self.button_cfg = button_cfg
 
         x = button_cfg['position']['x']
         y = button_cfg['position']['y']
@@ -65,32 +66,27 @@ class Button:
         self.inputs = button_cfg.get('inputs', '')
 
         self.rect = pygame.Rect(x, y, self.width, self.height)
-        self._subtype_attr_loader(display_cfg=display_cfg, button_cfg=button_cfg)
+        self._subtype_attr_loader()
 
 
-    def _subtype_attr_loader(self, display_cfg: dict, button_cfg: dict) -> None:
+    def _subtype_attr_loader(self) -> None:
         '''
         Loads mandatory attributes depending on the subtype button.
-
-        Returns:
-            None
         '''
-        fonts = display_cfg['fonts']
-        colors = display_cfg['colors']
+        fonts = self.display_cfg['fonts']
+        colors = self.display_cfg['colors']
         
         if self.subtype == 'text':
-            self.text = button_cfg['text']
-            self.font = fonts[button_cfg['font']]
-            self.color_base = colors[button_cfg['color']['base']]
-            self.color_hover = colors[button_cfg['color']['hover']]
-            self.color_curr = colors[button_cfg['color']['base']]
+            self.text = self.button_cfg['text']
+            self.font = fonts[self.button_cfg['font']]
+            self.color_base = colors[self.button_cfg['color']['base']]
+            self.color_hover = colors[self.button_cfg['color']['hover']]
+            self.color_curr = colors[self.button_cfg['color']['base']]
             self._transform_text()
             
         elif self.subtype == 'image':
-            img_base_cfg = self._get_image_cfg(button_cfg=button_cfg,
-                                               mode_key='base')
-            img_hover_cfg = self._get_image_cfg(button_cfg=button_cfg,
-                                               mode_key='hover')
+            img_base_cfg = self._get_image_cfg(mode_key='base')
+            img_hover_cfg = self._get_image_cfg(mode_key='hover')
 
             self.img_base =  Image(display_cfg=self.display_cfg, 
                                    image_cfg=img_base_cfg)
@@ -98,7 +94,7 @@ class Button:
                                    image_cfg=img_hover_cfg)
             
     
-    def _get_image_cfg(self, button_cfg: dict, mode_key: str) -> dict:
+    def _get_image_cfg(self, mode_key: str) -> dict:
         '''
         Extracts and merges visual parameters for a specific button state.
         Button state must be: base or hover.
@@ -108,8 +104,8 @@ class Button:
         '''
         image_cfg = {}
 
-        for param_key in button_cfg.keys():
-            param = button_cfg.get(param_key)
+        for param_key in self.button_cfg.keys():
+            param = self.button_cfg.get(param_key)
             if isinstance(param, dict):
                 subparam = param.get(mode_key, None)
                 if subparam is not None:
@@ -174,7 +170,8 @@ class Button:
         Processes internal button logic: hover states and click detection.
         
         Returns:
-            dict: The actions (functions and redirection) if clicked, else None.
+            dict: The actions (functions and redirection) if clicked, 
+                  else None.
         '''
         pos_mouse = pygame.mouse.get_pos()
         self.is_hovering = self.rect.collidepoint(pos_mouse)
@@ -192,17 +189,14 @@ class Button:
         Handles the rendering of the button and the hover logic.
 
         Args:
-            screen (pygame.Surface): The surface where the button will be drawn.
-
-        Returns:
-            None
+            screen (pygame.Surface): Surface where the button will be drawn.
         '''
         pos_mouse = pygame.mouse.get_pos()
         is_hovering = self.rect.collidepoint(pos_mouse)
 
         if self.subtype == 'text':
-            self.color_curr = self.color_hover if is_hovering else self.color_base
-            pygame.draw.rect(screen, self.color_curr, self.rect, border_radius=8)
+            color_curr = self.color_hover if is_hovering else self.color_base
+            pygame.draw.rect(screen, color_curr, self.rect, border_radius=8)
             screen.blit(self.text_surface, self.text_rect)
 
         elif self.subtype == 'image':
