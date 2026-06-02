@@ -18,8 +18,6 @@ The application layout and behavior are defined through a hierarchical JSON sche
 ### 2. Concurrency Management: The Worker Thread
 To prevent heavy processes (statistical calculations, disk/network access) from blocking the main UI thread (60 FPS), this framework implements a concurrency model based on a **FIFO Queue**.
 
-
-
 - **Separation of Concerns:** The main thread handles rendering and event capture exclusively, while the **Worker Thread** processes business logic.
 - **Race Condition Prevention:** By centralizing external function execution in a single worker thread via a queue, memory access conflicts are eliminated, ensuring a linear and predictable execution flow.
 - **True Asynchrony:** Users can continue interacting with the app or queue new tasks while the Worker processes previous ones.
