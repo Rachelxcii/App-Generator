@@ -102,9 +102,6 @@ class Screen:
             if type(el) in out_types:
                 for func_name in el.monitored_functions:
                     self.out_hooks[func_name].append(el)
-        
-        print(f'--- FUNCS HOOKS: {self.functions_hooks}')
-        print(f'--- FUNCS OUTPUTS: {self.out_hooks}')
 
         # Shared tasks queue
         self.shared_tasks = shared_tasks
@@ -142,7 +139,6 @@ class Screen:
             response = element.handle_events(event)
             
             if response:
-                print(f'RESPONSE: {response}')
                 return self._process_element_response(response)
                     
         return None

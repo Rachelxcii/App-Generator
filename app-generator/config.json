@@ -14,7 +14,7 @@
         "height": 500,
         "fps": 60,
         "init_screen": "MAIN-SCREEN",
-        "await_all_tasks": true,
+        "await_all_tasks": false,
         "colors": {
             "background": [28, 27, 27],
             "button_base": [67, 64, 57],
