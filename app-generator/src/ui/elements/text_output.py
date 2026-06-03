@@ -49,7 +49,7 @@ class TextOutput:
         self.font = display_cfg['fonts'][text_output_cfg['font']]
         self.color = display_cfg['colors'][text_output_cfg['color']]
         
-        self.text = text_output_cfg.get('initial_text')
+        self.text = text_output_cfg.get('initial_text', '')
         if self.text == '': self.text = ' ' #Prevents 'zsh: segmentation fault'
         
         self.x = text_output_cfg['position']['x']

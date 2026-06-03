@@ -166,7 +166,7 @@
                 "size": {"width": 550, "height": 50},
                 "font": "default",
                 "color": "thistle",
-                "initial_text": "",
+
                 "monitored_functions": ["sleep_timer", "read_prompt"]
             },
             "read_user_prompt_button": {
