@@ -57,19 +57,23 @@ This framework addresses the historical limitation of Pygame (its single-threade
     source .venv/bin/activate  # On Windows: .venv\Scripts\activate
     ```
 
-3. Install dependencies and initialize the development environment:
+3. Install requirements and initialize the development environment:
     ```bash
     pip install -r requirements.txt
-    # This installs dependencies and sets up pre-commit hooks
-    make init
     ```
 
 ## 🚀 Getting Started
 
+Window -> Screen -> Element
+
 ### Custimize your own app
-Modify the configuration JSON
+
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ### Running the App-Generator
+
     ```bash
     python app-generator/main.py
     ```
