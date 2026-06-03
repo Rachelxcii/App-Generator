@@ -1,12 +1,12 @@
 import pygame
 
 
-def text_inputs_loader(display_cfg: dict, text_inputs_cfg: dict) -> list:
+def text_inputs_loader(window_cfg: dict, text_inputs_cfg: dict) -> list:
     '''
     Parses text configuration data to instantiate UI TextInput objects.
 
     Args:
-        display_cfg (dict): Global display and asset settings.
+        window_cfg (dict): Global window and asset settings.
         text_inputs (dict): Nested dictionary containing text inputs 
                             configuration.
 
@@ -15,7 +15,7 @@ def text_inputs_loader(display_cfg: dict, text_inputs_cfg: dict) -> list:
     '''
     text_inputs = []
     for text_input_cfg in text_inputs_cfg:
-        text_inputs.append(TextInput(display_cfg=display_cfg, 
+        text_inputs.append(TextInput(window_cfg=window_cfg, 
                                      text_input_cfg=text_input_cfg))
     return text_inputs
 
@@ -35,12 +35,12 @@ class TextInput:
         showing_placeholder (bool): State flag for placeholder visibility.
     '''
 
-    def __init__(self, display_cfg: dict, text_input_cfg: dict):
+    def __init__(self, window_cfg: dict, text_input_cfg: dict):
         '''
         Initializes the Input field with styling and positioning.
 
         Args:
-            display_cfg (dict): Global display/theme configuration.
+            window_cfg (dict): Global window configuration.
             text_input_cfg (dict): Specific configuration for this instance.
         '''
         self.id = text_input_cfg['id']
@@ -51,8 +51,8 @@ class TextInput:
                                 text_input_cfg['size']['width'], 
                                 text_input_cfg['size']['height']) 
         
-        self.colors = display_cfg['colors']
-        self.font = display_cfg['fonts'][text_input_cfg.get('font', 'default')]
+        self.colors = window_cfg['colors']
+        self.font = window_cfg['fonts'][text_input_cfg.get('font', 'default')]
         pygame.key.set_repeat(500, 50)
         
         # Initial state
@@ -84,8 +84,8 @@ class TextInput:
             self.color_placeholder if self.showing_placeholder 
             else self.color_text
             )
-        display_text = self.text if self.text != '' else ' '
-        self.text_surface = self.font.render(display_text, True, color)
+        window_text = self.text if self.text != '' else ' '
+        self.text_surface = self.font.render(window_text, True, color)
         
 
     def handle_events(self, event: pygame.event.Event) -> None:
@@ -161,7 +161,7 @@ class TextInput:
         draws the text.
 
         Args:
-            screen (pygame.Surface): The display surface to draw on.
+            screen (pygame.Surface): The window surface to draw on.
         '''
         # Draws the edges of the box
         pygame.draw.rect(screen, self.color_curr, self.rect, 2)

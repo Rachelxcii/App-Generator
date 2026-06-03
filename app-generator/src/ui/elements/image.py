@@ -1,12 +1,12 @@
 import pygame
 
 
-def images_loader(display_cfg: dict, images_cfg: dict) -> list:
+def images_loader(window_cfg: dict, images_cfg: dict) -> list:
     '''
     Parses image configuration data to instantiate UI Image objects.
 
     Args:
-        display_cfg (dict): Global display and asset settings.
+        window_cfg (dict): Global window and asset settings.
         images_cfg (dict): Nested dictionary containing images configuration.
 
     Returns:
@@ -14,7 +14,7 @@ def images_loader(display_cfg: dict, images_cfg: dict) -> list:
     '''
     images = []
     for image_cfg in images_cfg:
-        images.append(Image(display_cfg=display_cfg, image_cfg=image_cfg))
+        images.append(Image(window_cfg=window_cfg, image_cfg=image_cfg))
     return images
 
 
@@ -36,20 +36,20 @@ class Image:
         angle (int): Current rotation angle in degrees.
     '''
 
-    def __init__(self, display_cfg: dict, image_cfg: dict):
+    def __init__(self, window_cfg: dict, image_cfg: dict):
         '''
         Initializes the Image object by loading, scaling, and tinting the 
         asset.
 
         Args:
-            display_cfg (dict): Global display settings containing paths and 
+            window_cfg (dict): Global window settings containing paths and 
                                 color palettes.
             image_cfg (dict): Specific element configuration 
                               (file, position, size, tint).
         '''
         self.id = image_cfg['id']
 
-        path_dir = display_cfg['paths']['images']
+        path_dir = window_cfg['paths']['images']
         self.path_image = path_dir / image_cfg['file']
         self.size = image_cfg.get('size', '')
         self.x = image_cfg['position']['x']
@@ -70,7 +70,7 @@ class Image:
         tint_color = image_cfg.get('tint_color')
 
         if tint_color:
-            target_rgb = display_cfg['colors'].get(tint_color, (255, 255, 255))
+            target_rgb = window_cfg['colors'].get(tint_color, (255, 255, 255))
             self._tint_image(target_rgb)
 
 

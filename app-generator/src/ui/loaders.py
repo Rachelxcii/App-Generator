@@ -9,7 +9,7 @@ from src.ui.elements.text_input import text_inputs_loader
 from src.ui.elements.text_output import text_outputs_loader
 
 
-def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
+def element_detector(window_cfg: dict, elements_cfg: dict) -> list:
     '''
     Orchestrates the identification and instantiation of UI components from raw data.
 
@@ -19,7 +19,7 @@ def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
     ready-to-draw objects.
 
     Args:
-        display_cfg (dict): Global engine configuration (paths, colors, fonts).
+        window_cfg (dict): Global window configuration (paths, colors, fonts).
         elements_cfg (dict): Raw dictionary from JSON containing UI element schemas.
 
     Returns:
@@ -44,31 +44,31 @@ def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
     elements = []
 
     if buttons_cfg:
-        buttons = buttons_loader(display_cfg=display_cfg, 
+        buttons = buttons_loader(window_cfg=window_cfg, 
                                  buttons_cfg=buttons_cfg)
         elements += buttons
         
     if images_cfg:
-        images = images_loader(display_cfg=display_cfg, images_cfg=images_cfg)
+        images = images_loader(window_cfg=window_cfg, images_cfg=images_cfg)
         elements += images
     
     if texts_cfg:
-        texts = texts_loader(display_cfg=display_cfg, texts_cfg=texts_cfg)
+        texts = texts_loader(window_cfg=window_cfg, texts_cfg=texts_cfg)
         elements += texts
 
     if text_inputs_cfg:
-        text_inputs = text_inputs_loader(display_cfg=display_cfg, 
+        text_inputs = text_inputs_loader(window_cfg=window_cfg, 
                                          text_inputs_cfg=text_inputs_cfg)
         elements += text_inputs
 
     if text_outputs_cfg:
-        text_outputs = text_outputs_loader(display_cfg=display_cfg, 
+        text_outputs = text_outputs_loader(window_cfg=window_cfg, 
                                            text_outputs_cfg=text_outputs_cfg)
         elements += text_outputs
 
     if loading_icons_cfg:
         loading_icons = loading_icons_loader(
-            display_cfg=display_cfg,
+            window_cfg=window_cfg,
             loading_icons_cfg=loading_icons_cfg,
             )
         elements += loading_icons
@@ -76,7 +76,7 @@ def element_detector(display_cfg: dict, elements_cfg: dict) -> list:
     return elements
     
 
-def fonts_loader(display_cfg: dict) -> dict:
+def fonts_loader(window_cfg: dict) -> dict:
     '''
     Resolves filesystem paths and initializes Pygame font assets.
 
@@ -84,15 +84,15 @@ def fonts_loader(display_cfg: dict) -> dict:
     instantiated pygame.font.Font objects using the provided system paths.
 
     Args:
-        display_cfg (dict): Global display and asset settings.
+        window_cfg (dict): Global window and asset settings.
 
     Returns:
         dict: Mapping of font identifiers (str) to pygame.font.Font objects.
     '''
-    fonts_path = display_cfg['paths']['fonts']
+    fonts_path = window_cfg['paths']['fonts']
 
     fonts = {}
-    for key, data in display_cfg['fonts'].items():
+    for key, data in window_cfg['fonts'].items():
         path = fonts_path / data['file']
         fonts[key] = pygame.font.Font(str(path), data['size'])
         

@@ -32,11 +32,11 @@ class App:
             pygame.font.init()
 
         # Load ui configuration
-        self.display_cfg = self.config['display']
-        self.display_cfg['paths'] = self.paths
+        self.window_cfg = self.config['window']
+        self.window_cfg['paths'] = self.paths
 
         print(f"[INFO] Loading system fonts...")
-        self.display_cfg['fonts'] = fonts_loader(display_cfg=self.config['display'])
+        self.window_cfg['fonts'] = fonts_loader(window_cfg=self.config['window'])
 
         self.screens_cfg = {k: v for k, v in self.config.items() if k.endswith("_screen")}
 
@@ -45,7 +45,7 @@ class App:
         self.result_queue = queue.Queue()
         self.running = True
         self.closing_mode = False
-        self.await_all_tasks = self.display_cfg['await_all_tasks']
+        self.await_all_tasks = self.window_cfg['await_all_tasks']
         
         # Threading (Only one worker thread)
         print(f"[INFO] Starting Worker Thread...")
@@ -55,19 +55,19 @@ class App:
 
         # Pygame setup
         pygame.init()
-        self.display = pygame.display.set_mode((self.display_cfg['width'], 
-                                                self.display_cfg['height']))
+        self.window = pygame.display.set_mode((self.window_cfg['width'], 
+                                                self.window_cfg['height']))
         pygame.display.set_caption("My App Framework")
 
         # Screen Instantiation
         # Dictionary containing instantiated screen objects mapped by their ID
         print(f"[INFO] Instantiating {len(self.screens_cfg)} screens...")
-        self.screens = screens_loader(display_cfg=self.display_cfg, 
+        self.screens = screens_loader(window_cfg=self.window_cfg, 
                                       screens_cfg=self.screens_cfg,
                                       shared_tasks=self.task_queue)
         
         # Set the starting point for the state machine
-        self.current_state = self.display_cfg['init_screen']
+        self.current_state = self.window_cfg['init_screen']
         print(f"[INFO] Entry point set to screen: '{self.current_state}'")
 
         # Frame rate controller
@@ -145,11 +145,11 @@ class App:
 
     def run(self):
         '''
-        Main execution loop. Initializes the display and manages state transitions 
+        Main execution loop. Initializes the window and manages state transitions 
         between different application screens.
 
         Logic:
-            1. Initializes the Pygame display surface and clock.
+            1. Initializes the Pygame window surface and clock.
             2. Loads all screen objects based on the configuration.
             3. Enters the main loop: 
             - Handles events through the active screen.
@@ -184,9 +184,9 @@ class App:
                         self.current_state = new_state
 
             # Renders
-            active_screen.draw(self.display)
-            pygame.display.flip()
-            self.clock.tick(self.display_cfg['fps'])
+            active_screen.draw(self.window)
+            pygame.display.flip() 
+            self.clock.tick(self.window_cfg['fps'])
 
         pygame.quit()
         sys.exit()

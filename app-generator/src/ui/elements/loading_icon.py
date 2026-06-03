@@ -3,12 +3,12 @@ import pygame
 from src.ui.elements.image import Image
 
 
-def loading_icons_loader(display_cfg: dict, loading_icons_cfg: dict) -> list:
+def loading_icons_loader(window_cfg: dict, loading_icons_cfg: dict) -> list:
     '''
     Parses configuration data to instantiate UI Loading Icon objects.
 
     Args:
-        display_cfg (dict): Global display and asset settings.
+        window_cfg (dict): Global window and asset settings.
         text_inputs (dict): Nested dictionary containing loading icons
                             configuration.
 
@@ -17,7 +17,7 @@ def loading_icons_loader(display_cfg: dict, loading_icons_cfg: dict) -> list:
     '''
     loading_icons = []
     for loading_icon_cfg in loading_icons_cfg:
-        loading_icons.append(LoadingIcon(display_cfg=display_cfg,
+        loading_icons.append(LoadingIcon(window_cfg=window_cfg,
                                          loading_icon_cfg=loading_icon_cfg))
     return loading_icons
 
@@ -33,19 +33,19 @@ class LoadingIcon:
 
     Attributes:
         id (str): Unique identifier for the icon.
-        display_cfg (dict): Global configuration for paths and colors.
+        window_cfg (dict): Global configuration for paths and colors.
         loading_icon_cfg (dict): Specific configuration.
         func (str): The name of the registered function this icon is tracking.
         is_running (bool): State flag synced with the "func" execution status.
         image (Image): The underlying Image instance handling the pixels.
     '''
 
-    def __init__(self, display_cfg: dict, loading_icon_cfg: dict):
+    def __init__(self, window_cfg: dict, loading_icon_cfg: dict):
         '''
         Initializes the LoadingIcon and links it to a monitored process.
 
         Args:
-            display_cfg (dict): Global configuration dictionary.
+            window_cfg (dict): Global configuration dictionary.
             loading_icon_cfg (dict): Component-specific settings from JSON.
         '''
         self.id = loading_icon_cfg['id']
@@ -53,15 +53,15 @@ class LoadingIcon:
         self.monitored_functions = loading_icon_cfg.get('monitored_functions')
         self.is_running = False
 
-        self._load_image(display_cfg=display_cfg,
+        self._load_image(window_cfg=window_cfg,
                          loading_icon_cfg=loading_icon_cfg)
 
 
-    def _load_image(self, display_cfg: dict, loading_icon_cfg: dict) -> None:
+    def _load_image(self, window_cfg: dict, loading_icon_cfg: dict) -> None:
         '''
         Composition step: Creates an Image instance to handle rendering logic.
         '''
-        self.image =  Image(display_cfg=display_cfg, 
+        self.image =  Image(window_cfg=window_cfg, 
                             image_cfg=loading_icon_cfg)
 
 

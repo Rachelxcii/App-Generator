@@ -1,12 +1,12 @@
 import pygame
 
 
-def text_outputs_loader(display_cfg: dict, text_outputs_cfg: dict) -> list:
+def text_outputs_loader(window_cfg: dict, text_outputs_cfg: dict) -> list:
     '''
     Parses text configuration data to instantiate UI TextOutput objects.
 
     Args:
-        display_cfg (dict): Global display and asset settings.
+        window_cfg (dict): Global window and asset settings.
         text_outputs_cfg (dict): Nested dictionary containing text outputs 
                                  configuration.
 
@@ -15,14 +15,14 @@ def text_outputs_loader(display_cfg: dict, text_outputs_cfg: dict) -> list:
     '''
     text_outputs = []
     for text_output_cfg in text_outputs_cfg:
-        text_outputs.append(TextOutput(display_cfg=display_cfg, 
+        text_outputs.append(TextOutput(window_cfg=window_cfg, 
                                        text_output_cfg=text_output_cfg))
     return text_outputs
 
 
 class TextOutput:
     '''
-    A dynamic UI element used to display data-driven results.
+    A dynamic UI element used to window data-driven results.
 
     Unlike the static Text class, TextOutput allows for real-time updates of 
     its content while maintaining the architectural constraints (scaling, 
@@ -35,19 +35,19 @@ class TextOutput:
         color (tuple): RGB color for the text.
     '''
 
-    def __init__(self, display_cfg: dict, text_output_cfg: dict):
+    def __init__(self, window_cfg: dict, text_output_cfg: dict):
         '''
         Initializes the output field with its configuration schema.
         '''
         self.id = text_output_cfg['id']
         self.subtype = text_output_cfg['subtype']
-        self.display_cfg = display_cfg
+        self.window_cfg = window_cfg
         self.text_output_cfg = text_output_cfg
 
         self.monitored_functions = text_output_cfg.get('monitored_functions')
 
-        self.font = display_cfg['fonts'][text_output_cfg['font']]
-        self.color = display_cfg['colors'][text_output_cfg['color']]
+        self.font = window_cfg['fonts'][text_output_cfg['font']]
+        self.color = window_cfg['colors'][text_output_cfg['color']]
         
         self.text = text_output_cfg.get('initial_text', '')
         if self.text == '': self.text = ' ' #Prevents 'zsh: segmentation fault'
@@ -112,6 +112,6 @@ class TextOutput:
         Blits the current output surface to the screen.
 
         Args:
-            screen (pygame.Surface): The display surface to draw on.
+            screen (pygame.Surface): The window surface to draw on.
         '''
         screen.blit(self.surface, self.draw_pos)

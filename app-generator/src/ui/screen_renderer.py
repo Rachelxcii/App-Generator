@@ -15,13 +15,13 @@ from src.functions.functions_registry import (internal_functions_registry,
 
 
 def screens_loader(
-        display_cfg: dict, screens_cfg: dict, shared_tasks: queue
+        window_cfg: dict, screens_cfg: dict, shared_tasks: queue
         ) -> dict:
     '''
     Initializes all application screens from configuration data.
 
     Args:
-        display_cfg (dict): Global display and asset settings.
+        window_cfg (dict): Global window and asset settings.
         screens_cfg (dict): Layout and element definitions for each screen.
 
     Returns:
@@ -30,7 +30,7 @@ def screens_loader(
     screens = dict()
     for screen_cfg in screens_cfg.values():
         screens[screen_cfg['ID']] = Screen(screen_id=screen_cfg['ID'],
-                                           display_cfg=display_cfg,
+                                           window_cfg=window_cfg,
                                            screen_cfg=screen_cfg,
                                            shared_tasks=shared_tasks)
     return screens
@@ -46,7 +46,7 @@ class Screen:
 
     Attributes:
         screen_id (str): Unique identifier for the current state/menu.
-        display_cfg (dict): Global display and asset settings.
+        window_cfg (dict): Global window and asset settings.
         screen_cfg (dict): Configuration schema for this specific screen.
         elements (list): All UI components (visual and interactive).
         controls (list): Subset of elements that capture user input.
@@ -56,7 +56,7 @@ class Screen:
                                     to the Worker.
     '''
 
-    def __init__(self, screen_id: str, display_cfg: dict, screen_cfg: dict, 
+    def __init__(self, screen_id: str, window_cfg: dict, screen_cfg: dict, 
                  shared_tasks: queue):
         '''
         Initializes the screen environment and instantiates its UI component 
@@ -64,7 +64,7 @@ class Screen:
 
         Args:
             screen_id (str): Name of the screen.
-            display_cfg (dict): Global configuration for styles and resources.
+            window_cfg (dict): Global configuration for styles and resources.
             screen_cfg (dict): JSON-derived dictionary for screen elements.
             shared_tasks (queue.Queue): Communication channel for the Worker Thread.
         '''
@@ -73,14 +73,14 @@ class Screen:
         self.func_from_registry_is_running = False
 
         self.screen_id = screen_id
-        self.display_cfg = display_cfg
+        self.window_cfg = window_cfg
         self.screen_cfg = screen_cfg
         self.elements_cfg = screen_cfg['elements']
 
-        self.colors = display_cfg['colors']
-        self.fonts = display_cfg['fonts']
+        self.colors = window_cfg['colors']
+        self.fonts = window_cfg['fonts']
 
-        self.elements = element_detector(display_cfg=self.display_cfg,
+        self.elements = element_detector(window_cfg=self.window_cfg,
                                          elements_cfg=self.elements_cfg)
 
         # Controls: Elements that user can interact with
@@ -112,7 +112,7 @@ class Screen:
         Renders the background and all UI elements to the surface.
 
         Args:
-            screen (pygame.Surface): The main display surface where elements 
+            screen (pygame.Surface): The main window surface where elements 
                                      will be drawn.
         '''
         screen.fill(self.colors['background'])        

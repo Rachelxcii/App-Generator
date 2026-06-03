@@ -4,12 +4,12 @@ from typing import Optional
 from src.ui.elements.image import Image
 
 
-def buttons_loader(display_cfg: dict, buttons_cfg: dict) -> list:
+def buttons_loader(window_cfg: dict, buttons_cfg: dict) -> list:
     '''
     Parses button configuration data to instantiate UI Button objects.
 
     Args:
-        display_cfg (dict): Global display and asset settings.
+        window_cfg (dict): Global window and asset settings.
         buttons_cfg (dict): Nested dictionary containing buttons configuration.
 
     Returns:
@@ -17,7 +17,7 @@ def buttons_loader(display_cfg: dict, buttons_cfg: dict) -> list:
     '''
     buttons = []
     for button_cfg in buttons_cfg:
-        buttons.append(Button(display_cfg=display_cfg, button_cfg=button_cfg))
+        buttons.append(Button(window_cfg=window_cfg, button_cfg=button_cfg))
     return buttons
 
 
@@ -39,20 +39,20 @@ class Button:
         func_name (str): Identifier for the function to execute on click.
     '''
 
-    def __init__(self, display_cfg: dict, button_cfg: dict):
+    def __init__(self, window_cfg: dict, button_cfg: dict):
         '''
         Initializes the Button by extracting layout, styling and assets 
         from configuration dictionaries.
 
         Args:
-            display_cfg (dict): Global configuration containing fonts and 
+            window_cfg (dict): Global configuration containing fonts and 
                                 color palettes.
             button_cfg (dict): Specific dictionary with position, size, subtype 
                                and functional data for this button.
         '''
         self.id = button_cfg['id']
         self.subtype = button_cfg['subtype']
-        self.display_cfg = display_cfg
+        self.window_cfg = window_cfg
         self.button_cfg = button_cfg
 
         x = button_cfg['position']['x']
@@ -73,8 +73,8 @@ class Button:
         '''
         Loads mandatory attributes depending on the subtype button.
         '''
-        fonts = self.display_cfg['fonts']
-        colors = self.display_cfg['colors']
+        fonts = self.window_cfg['fonts']
+        colors = self.window_cfg['colors']
         
         if self.subtype == 'text':
             self.text = self.button_cfg['text']
@@ -88,9 +88,9 @@ class Button:
             img_base_cfg = self._get_image_cfg(mode_key='base')
             img_hover_cfg = self._get_image_cfg(mode_key='hover')
 
-            self.img_base =  Image(display_cfg=self.display_cfg, 
+            self.img_base =  Image(window_cfg=self.window_cfg, 
                                    image_cfg=img_base_cfg)
-            self.img_hover = Image(display_cfg=self.display_cfg, 
+            self.img_hover = Image(window_cfg=self.window_cfg, 
                                    image_cfg=img_hover_cfg)
             
     

@@ -1,12 +1,12 @@
 import pygame
 
 
-def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
+def texts_loader(window_cfg: dict, texts_cfg: dict) -> list:
     '''
     Parses text configuration data to instantiate UI Text objects.
 
     Args:
-        display_cfg (dict): Global display and asset settings.
+        window_cfg (dict): Global display and asset settings.
         texts_cfg (dict): Nested dictionary containing texts configuration.
 
     Returns:
@@ -14,7 +14,7 @@ def texts_loader(display_cfg: dict, texts_cfg: dict) -> list:
     '''
     texts = []
     for text_cfg in texts_cfg:
-        texts.append(Text(display_cfg=display_cfg, text_cfg=text_cfg))
+        texts.append(Text(window_cfg=window_cfg, text_cfg=text_cfg))
     return texts
 
 
@@ -36,13 +36,13 @@ class Text:
             draw_pos (tuple/pygame.Rect): The final blit coordinates or Rect.
         '''
 
-        def __init__(self, display_cfg: dict, text_cfg: dict):
+        def __init__(self, window_cfg: dict, text_cfg: dict):
             '''
             Initializes the Text element by extracting content and styling 
             from configuration.
 
             Args:
-                display_cfg (dict): Global configuration containing fonts and 
+                window_cfg (dict): Global configuration containing fonts and 
                                     color palettes.
                 text_cfg (dict): Specific dictionary defining the text content,
                                  position, font key and color key.
@@ -52,10 +52,10 @@ class Text:
             self.text = text_cfg['text']
             self.x = text_cfg['position']['x']
             self.y = text_cfg['position']['y']
-            self.font = display_cfg['fonts'][text_cfg['font']]
-            self.color = display_cfg['colors'][text_cfg['color']]
+            self.font = window_cfg['fonts'][text_cfg['font']]
+            self.color = window_cfg['colors'][text_cfg['color']]
             
-            self.size_cfg = display_cfg.get('size', '')
+            self.size_cfg = window_cfg.get('size', '')
             self._prepare_surface()
         
 

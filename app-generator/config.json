@@ -9,7 +9,7 @@
             }
         }, 
         
-    "display": {
+    "window": {
         "width": 700,
         "height": 500,
         "fps": 60,
