@@ -37,19 +37,44 @@ This framework addresses the historical limitation of Pygame (its single-threade
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Installation
 
 ### Prerequisites
 - **Python 3.14**
 - **Pygame 2.6.1+**
 
-### Installation
-```bash
-git clone [https://github.com/Rachelxcii/App-Generator.git](https://github.com/Rachelxcii/App-Generator.git)
-cd App-Generator
-pip install -r requirements.txt
-# App-Generator
+### Setup
 
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/Rachelxcii/App-Generator.git
+    cd App-Generator
+    ```
+
+2. Create and activate a virtual environment:
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+    ```
+
+3. Install dependencies and initialize the development environment:
+    ```bash
+    pip install -r requirements.txt
+    # This installs dependencies and sets up pre-commit hooks
+    make init
+    ```
+
+## 🚀 Getting Started
+
+### Custimize your own app
+Modify the configuration JSON
+
+### Running the App-Generator
+    ```bash
+    python app-generator/main.py
+    ```
+
+### --- WIP: HOW TO IMPLEMENT YOUR OWN FUNCTIONS, IMAGES, ETC. --- 
 If you want to attached external assets use the following folders:
 - Images path: app-generator/assets/images (Also for icons)
 - Fonts path: app-generator/assets/fonts

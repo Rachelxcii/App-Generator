@@ -1,1 +1,2 @@
---- LIBRARIES ---
+# Python version: 3.14.0
+pygame>=2.6.1
