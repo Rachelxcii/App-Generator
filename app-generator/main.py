@@ -45,7 +45,7 @@ class App:
         self.result_queue = queue.Queue()
         self.running = True
         self.closing_mode = False
-        self.await_all_tasks = self.window_cfg['await_all_tasks']
+        self.await_all_tasks = self.window_cfg.get('await_all_tasks', False)
         
         # Threading (Only one worker thread)
         print(f"[INFO] Starting Worker Thread...")
@@ -71,6 +71,7 @@ class App:
         print(f"[INFO] Entry point set to screen: '{self.current_state}'")
 
         # Frame rate controller
+        self.fps = self.window_cfg.get('fps', 60)
         self.clock = pygame.time.Clock()
 
 
@@ -186,7 +187,7 @@ class App:
             # Renders
             active_screen.draw(self.window)
             pygame.display.flip() 
-            self.clock.tick(self.window_cfg['fps'])
+            self.clock.tick(self.fps)
 
         pygame.quit()
         sys.exit()

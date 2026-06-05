@@ -87,15 +87,15 @@
                 "redirection": "SECONDARY-SCREEN",
                 "functions": [""]
             },
-            "useless_button": {
+            "tertiary_button": {
                 "type": "button",
                 "subtype": "text",
                 "position" : {"x": 275, "y": 250},
                 "size": {"width": 150, "height": 150},
-                "text": "RXCII",
+                "text": "TER.",
                 "font": "sml_button",
                 "color": {"base": "thistle", "hover": "aubergine"},
-                "redirection": "",
+                "redirection": "TERTIARY-SCREEN",
                 "functions": [""]
             },
             "exit_button": {
@@ -220,5 +220,46 @@
                 "functions": ["cancel_pending_tasks"]
             }
         }
-    }
+    },
+    
+    "third_screen": {
+        "ID": "TERTIARY-SCREEN",
+        "elements": {
+            "return_button": {
+                "type": "button",
+                "subtype": "image",
+                "position" : {"x": 50, "y": 50},
+                "size": {"width": 50, "height": 100},
+                "file": {
+                    "base": "return_button.png", 
+                    "hover": "return_button.png"
+                },
+                "redirection": "MAIN-SCREEN",
+                "functions": [""],
+                "tint_color": {"base": "thistle", "hover": "aubergine"},
+                "rotation": {"base": false, "hover": true}
+            },
+            "screen_title": {
+                "type": "text",
+                "text": "SECONDARY",
+                "position": {"x": 100, "y": 50},
+                "size": {"width": 50, "height": 100},
+                "font": "title_secondary_screen",
+                "color": "title_txt"
+            },
+            "user_input_prompt": {
+                "type": "text_input",
+                "position": {"x": 100, "y": 150},
+                "size": {"width": 550, "height": 50},
+                "font": "default",
+                "placeholder": "Pega aquí tu texto para procesar...",
+                "max_chars": 100,
+                "allow_multiline": false,
+                "colors": {
+                    "background": "onyx",
+                    "passive": "shadow",
+                    "active": "parchment",
+                    "text": "parchment"
+                }
+            }
 }

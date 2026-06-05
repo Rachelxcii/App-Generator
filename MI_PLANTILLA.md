@@ -138,8 +138,3 @@ size: Dict con width y height. Si se define, el texto se escalará para encajar 
 
 
 
-
-
-
-
-
